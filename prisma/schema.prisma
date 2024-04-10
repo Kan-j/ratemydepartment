@@ -1,0 +1,45 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id Int @id @default(autoincrement())
+  email String @unique
+  name String
+  password String
+  departmentId Int 
+  department  Department@relation(fields: [departmentId], references: [id])  // Added relation details
+}
+
+
+model Department {
+  id          Int      @id @default(autoincrement())
+  name        String   @unique
+  ratings     Rating[]
+  users       User[]    // One-to-many relation
+  // Additional fields specific to departments (optional)
+}
+
+model Rating {
+  id            Int        @id @default(autoincrement())
+  departmentId  Int
+  likes         String
+  dislikes      String
+  improvements  String
+  stars         Int
+  createdAt     DateTime   @default(now())
+  quarter       Int        // Store the quarter information
+  year          Int        // Store the year information
+  department    Department @relation(fields: [departmentId], references: [id])
+}
