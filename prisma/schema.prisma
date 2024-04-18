@@ -20,6 +20,7 @@ model User {
   password String
   departmentId Int 
   department  Department@relation(fields: [departmentId], references: [id])  // Added relation details
+  ratings       Rating[]     // One-to-many relation: a user can have multiple ratings
 }
 
 
@@ -41,5 +42,7 @@ model Rating {
   createdAt     DateTime   @default(now())
   quarter       Int        // Store the quarter information
   year          Int        // Store the year information
+  ratedByUserId      Int        // ID of the user giving the rating
   department    Department @relation(fields: [departmentId], references: [id])
+  ratedByUser        User       @relation(fields: [ratedByUserId], references: [id]) // Added relation details
 }

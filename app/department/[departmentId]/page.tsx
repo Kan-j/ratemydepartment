@@ -1,5 +1,5 @@
 import DepartmentDetail from '@/components/forms/DepartmentDetailForm';
-import getDepartmentDetails from '@/lib/actions';
+import {getDepartmentDetails} from '@/lib/actions';
 import React from 'react'
 
 interface Props {

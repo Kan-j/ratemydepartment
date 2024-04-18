@@ -43,15 +43,13 @@ export const LoginForm = () => {
         redirect: true,
         callbackUrl: "/"
       })
-
-    console.log(result)
   }
 
   return (
     <section className="md:w-96 w-80">
       <section className="flex flex-col items-center gap-4 mb-3">
         <Image src="/assets/vra-logo.jpg" className="  bg-white" alt="VRA logo" width={120} height={30} />
-        <h3 className="font-bold text-2xl text-blue-400">RateMy<span className="text-white bg-blue-400 px-2">Department</span></h3>
+        <h3 className="font-bold text-2xl text-blue-400">RateYour<span className="text-white bg-blue-400 px-2">Department</span></h3>
       </section>
       
 

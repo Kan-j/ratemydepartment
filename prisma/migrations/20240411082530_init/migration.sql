@@ -30,6 +30,7 @@ CREATE TABLE `Rating` (
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `quarter` INTEGER NOT NULL,
     `year` INTEGER NOT NULL,
+    `ratedByUserId` INTEGER NOT NULL,
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -39,3 +40,6 @@ ALTER TABLE `User` ADD CONSTRAINT `User_departmentId_fkey` FOREIGN KEY (`departm
 
 -- AddForeignKey
 ALTER TABLE `Rating` ADD CONSTRAINT `Rating_departmentId_fkey` FOREIGN KEY (`departmentId`) REFERENCES `Department`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `Rating` ADD CONSTRAINT `Rating_ratedByUserId_fkey` FOREIGN KEY (`ratedByUserId`) REFERENCES `User`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
