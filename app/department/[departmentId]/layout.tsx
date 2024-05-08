@@ -22,21 +22,21 @@ export default async function RootLayout({
   
   const response = await fetch(`http://127.0.0.1:3000/api/department?email=${email}`)
   const  userDetails= await response.json()
-  const {departmentId} = userDetails.user
+  const {departmentId, isAdmin} = userDetails.user
   
   return (
     <html lang="en">
       <body className={inter.className}>
-          <section className=" flex flex-col min-h-screen md:h-screen relative bg-white">
-            <NavBar departmentId={departmentId}/>
-            <section className="relative z-10 h-full">
-              <section className="flex flex-col justify-center text-gray-800 items-center h-full">
+          <section className=" flex flex-col min-h-screen md:min-h-screen relative bg-white">
+            <NavBar departmentId={departmentId} isAdmin={isAdmin}/>
+            <section className=" z-10 h-full">
+              <section className="min-h-screen flex flex-col px-4 pt-2 sm:px-4 2xl:px-32">
                 {children}
               </section>
             </section>
-            <section className="bg-white h-2/6 absolute bottom-0 w-full">
+            {/* <section className="bg-white h-2/6 absolute bottom-0 w-full">
               <Image src="/assets/vra-logo.jpg" alt="alt" className="absolute bottom-2 left-3" width={200} height={70} />
-            </section>
+            </section> */}
           </section>
           <ToastContainer />
         </body>

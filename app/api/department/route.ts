@@ -11,7 +11,7 @@ export async function GET(request: Request) {
         const user = await prisma.user.findUnique({
             where: { email },
             // Select specific fields to exclude password
-            select: { id: true, email: true, departmentId: true, name: true,} // Add other relevant fields as needed }
+            select: { id: true, isAdmin:true, email: true, departmentId: true, name: true} // Add other relevant fields as needed }
           });
           if (!user) {
             return Response.json({ error: 'User not found' }, { status: 404 });

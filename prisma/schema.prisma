@@ -21,6 +21,7 @@ model User {
   departmentId Int 
   department  Department@relation(fields: [departmentId], references: [id])  // Added relation details
   ratings       Rating[]     // One-to-many relation: a user can have multiple ratings
+  isAdmin      Boolean   @default(false) // Added isAdmin field with default value false
 }
 
 
@@ -39,6 +40,7 @@ model Rating {
   dislikes      String
   improvements  String
   stars         Int
+  isPublished   Boolean   @default(false)
   createdAt     DateTime   @default(now())
   quarter       Int        // Store the quarter information
   year          Int        // Store the year information

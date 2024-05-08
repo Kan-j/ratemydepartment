@@ -2,6 +2,7 @@
 import SearchDepartment from "@/components/forms/SearchDepartment";
 import { getServerSession } from "next-auth";
 import Image from "next/image";
+import Link from "next/link";
 import { ToastContainer } from "react-toastify";
 
 
@@ -29,12 +30,12 @@ export default async function Home() {
   
   const response = await fetch(`http://127.0.0.1:3000/api/department?email=${email}`)
   const  userDetails= await response.json()
-  const {departmentId} = userDetails.user
+  const {departmentId, isAdmin} = userDetails.user
 
   return (
     <main>
-      <section className="text-white mt-14 md:mt-1 flex flex-col items-center">
-        <h3 className="font-bold md:text-4xl text-xl text-white">RateYour<span className="text-white bg-blue-500 px-2">Department</span></h3>
+      <section className="text-white mt-14 md:mt-1 flex flex-col items-center relative">
+        {isAdmin? <Link href="/admin" className="font-bold md:text-4xl text-xl text-white">RateYour<span className="text-white bg-blue-500 px-2">Department</span></Link>:<h3 className="font-bold md:text-4xl text-xl text-white">RateYour<span className="text-white bg-blue-500 px-2">Department</span></h3>}
         <p className="text-sm md:text-lg">Enter the name of the department you want to rate</p>
         <section>
           <SearchDepartment mydepartmentId={departmentId}/>
