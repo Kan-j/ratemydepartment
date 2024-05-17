@@ -95,7 +95,7 @@ const RatingForm = ({department, email, pathname, children}:{department:{
                     {/* <Button className="bg-blue-400"><span className='pr-2 text-lg'>Rate</span>  
                     <Rating size={24} allowHover={false} readonly={true} initialValue={1}  iconsCount={1} fillColor='#ffffff'/></Button> */}
                 </DialogTrigger>
-                <DialogContent className="sm:max-w-[425px] text-gray-800">
+                <DialogContent className=" w-full text-gray-800">
                     <DialogHeader>
                     <DialogTitle >
                         <h1 className='font-extrabold text-xl'>

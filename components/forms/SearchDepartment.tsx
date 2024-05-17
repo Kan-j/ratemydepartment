@@ -30,8 +30,8 @@ const SearchDepartment = ({mydepartmentId}:{mydepartmentId:number}) => {
 
 
 return (
-  <div className="w-96 mt-4 flex flex-col relative">
-    <label className="input input-bordered flex items-center gap-2 w-96 bg-white">
+  <div className="w-full mt-4 flex flex-col relative">
+    <label className="input input-bordered flex items-center gap-2 w-full bg-white">
       <input 
       type="text" 
       className="grow text-gray-900" 

@@ -41,11 +41,11 @@ export default async function Home() {
           <SearchDepartment mydepartmentId={departmentId}/>
         </section>
       </section>
-       <section className="flex flex-col items-center md:items-stretch w-full md:flex-row mt-8 gap-4 mb-24 md:mb-0 flex-1">
+       <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 items-center  w-full mt-8 gap-4 mb-24 md:mb-0">
           {items.map((item)=> {
             return (
               <div key={item.id} className="bg-white rounded-lg shadow-md flex flex-1 w-full  flex-col items-center text-gray-800 justify-center px-4 py-4 ">
-                <Image src={item.img} className="h-full w-32 md:w-48" alt="alt" width={200} height={300} />
+                <Image src={item.img} className="h-40 w-32 md:w-36" alt="alt" width={200} height={300} />
                 <h1 className="mt-2 font-semibold min-w-64 text-center text-sm md:text-base">{item.title}</h1>
               </div>
             )

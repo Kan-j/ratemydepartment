@@ -5,6 +5,7 @@ import CommentCard from "@/components/cards/CommentCard";
 import { getDepartmentDetailsForAdmin } from "@/lib/actions";
 import PublishButton from "@/components/forms/PublishButton";
 import SearchBarAdmin from "@/components/forms/SearchBarAdmin";
+import DownloadButton from "@/components/forms/DownloadButton";
 
 interface Params {
   params:{
@@ -31,6 +32,19 @@ const AdminDepartmentDetails = async({params, searchParams}:Params) => {
   // Now TypeScript knows the structure of the returned object
   const { department, totalRatings, starsCount, averageStars } = result;
 
+  const ratingCsvJSON = department.ratings?.map((rating:any) => ({
+    stars: rating.stars | 0,
+    likes: rating.likes || '',
+    dislikes: rating.dislikes || '' ,
+    improvements: rating.improvements || '',
+    departmentName: department.name || '',
+    quarter: rating.quarter || 0,
+    year: rating.year || 0,
+    ratedBy: rating.ratedByUser.department.name || ''
+  }));
+
+  console.log(ratingCsvJSON)
+  
 
   return (
     <div className='flex flex-col'>
@@ -57,7 +71,11 @@ const AdminDepartmentDetails = async({params, searchParams}:Params) => {
       <article className="flex flex-col">
         <section className="grid grid-cols-2 mt-12 mb-6">
           <h1 className="text-xl md:text-2xl text-gray-700 font-semibold">Comments ({department.ratings.length})</h1>
-          <PublishButton ratings={department.ratings}/>
+          <section className="flex gap-3">
+            <PublishButton ratings={department.ratings}/>
+            <DownloadButton ratingCsvJSON={ratingCsvJSON}/>
+          </section>
+          
         </section>
 
         <article className="flex flex-col gap-4">

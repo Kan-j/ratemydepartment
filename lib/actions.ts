@@ -223,6 +223,8 @@ export async function getDepartmentDetailsForAdmin(id: number, quarter: number =
             dislikes: true,
             improvements: true,
             isPublished: true,
+            year:true,
+            quarter:true,
             ratedByUser: {
               select: { id: true, departmentId: true, department: { select: { name: true } } }
             }
