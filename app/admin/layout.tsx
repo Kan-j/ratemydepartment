@@ -28,7 +28,7 @@ export default async function RootLayout({
   const email = session?.user?.email
   
   const response = await fetch(`http://127.0.0.1:3000/api/department?email=${email}`)
-  const  userDetails= await response.json()
+  const userDetails= await response.json()
   const {isAdmin} = userDetails.user
 
   if(!isAdmin) redirect('/')

@@ -1,15 +1,11 @@
-
-import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "@/app/globals.css";
-import Image from 'next/image';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import NavBar from "@/components/shared/NavBar";
 import { getServerSession } from "next-auth"
 
 const inter = Inter({ subsets: ["latin"] });
-
 
 
 export default async function RootLayout({
@@ -34,9 +30,6 @@ export default async function RootLayout({
                 {children}
               </section>
             </section>
-            {/* <section className="bg-white h-2/6 absolute bottom-0 w-full">
-              <Image src="/assets/vra-logo.jpg" alt="alt" className="absolute bottom-2 left-3" width={200} height={70} />
-            </section> */}
           </section>
           <ToastContainer />
         </body>

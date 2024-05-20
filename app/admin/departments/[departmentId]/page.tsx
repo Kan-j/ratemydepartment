@@ -22,9 +22,11 @@ interface DepartmentDetails {
 }
 
 const AdminDepartmentDetails = async({params, searchParams}:Params) => {
-
-  const q = parseInt(searchParams['q'] || '')
-  const y = parseInt(searchParams['y'] || '')
+  const today = new Date();
+  const currentYear = today.getFullYear();
+  const currentQuarter = Math.ceil((today.getMonth() + 1) / 3); 
+  const q = parseInt(searchParams['q'] || '')|| currentQuarter
+  const y = parseInt(searchParams['y'] || '')|| currentYear
 
   const departmentIdInt = parseInt(params.departmentId)
   const result = await getDepartmentDetailsForAdmin(departmentIdInt, q, y) as DepartmentDetails;
@@ -43,7 +45,6 @@ const AdminDepartmentDetails = async({params, searchParams}:Params) => {
     ratedBy: rating.ratedByUser.department.name || ''
   }));
 
-  console.log(ratingCsvJSON)
   
 
   return (

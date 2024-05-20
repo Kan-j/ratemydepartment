@@ -16,7 +16,10 @@ import QuarterSelector from "./QuarterSelector";
 const NavBar = ({departmentId, isAdmin}:{departmentId: number, isAdmin: Boolean}) => {
     const {data:session} = useSession();
     const router = useRouter()
-
+    let maxLength = 13;
+    let truncatedName = (session?.user?.name && session?.user?.name.length > maxLength )
+    ? session?.user?.name.substring(0, maxLength - 3) + "..."
+    : session?.user?.name;
   return (
     <>
         <div className="navbar md:px-12 px-6">
@@ -37,7 +40,7 @@ const NavBar = ({departmentId, isAdmin}:{departmentId: number, isAdmin: Boolean}
             <QuarterSelector screen='big'/>
             <p className="mr-4">
             <DropdownMenu>
-            <DropdownMenuTrigger className="text-gray-600 font-semibold text-sm md:text-lg ">{session?.user?.name}</DropdownMenuTrigger>
+            <DropdownMenuTrigger className="text-gray-600 font-semibold text-sm md:text-lg ">{truncatedName}</DropdownMenuTrigger>
             <DropdownMenuContent>
             <DropdownMenuLabel>My Account</DropdownMenuLabel>
             <DropdownMenuSeparator />

@@ -20,10 +20,7 @@ import { Button } from "../ui/button"
   
 import {
     Dialog,
-    DialogClose,
     DialogContent,
-    DialogDescription,
-    DialogFooter,
     DialogHeader,
     DialogTitle,
     DialogTrigger,
@@ -144,7 +141,7 @@ const RatingForm = ({department, email, pathname, children}:{department:{
                             />
 
                             <label className='text-sm font-medium'>How satisfied are you with the service provided?</label>
-                            <Rating className='inline' size={24}  onClick={handleRating} />
+                            <Rating className='block' size={24}  onClick={handleRating} />
                             {/* <DialogClose className='flex w-full mt-6 mb-3 text-white'> */}
                                 <Button type="submit" className="w-full mt-6 mb-3 bg-blue-500 text-white">Submit</Button>
                             {/* </DialogClose> */}

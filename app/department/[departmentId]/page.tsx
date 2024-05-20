@@ -21,7 +21,7 @@ interface DepartmentDetails {
 }
 
 
-const Page = async({params, searchParams}: Props) => {
+const DepartmentDetailPage = async({params, searchParams}: Props) => {
   const departmentId = params.departmentId;
 
   const id = parseInt(departmentId)
@@ -75,7 +75,6 @@ const Page = async({params, searchParams}: Props) => {
               {publishedRatingsLength == 0 && <h1 className="text-gray-700">Comments not yet published</h1>}
             </article>
           </article>
-          
       </div>
     )
   }
@@ -103,4 +102,4 @@ const Page = async({params, searchParams}: Props) => {
 
 
 
-export default Page
+export default DepartmentDetailPage

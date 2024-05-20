@@ -20,7 +20,6 @@ export default function RootLayout({
       <body className={inter.className}>
         <Providers>
           <section className="min-h-screen md:h-screen relative">
-
           <Image
               src='/assets/safety.png'
               alt="alt"
@@ -37,7 +36,6 @@ export default function RootLayout({
             <section className="bg-white h-2/6 absolute bottom-0 w-full">
               <Image src="/assets/vra-logo.jpg" alt="alt" className="absolute bottom-0 left-2" width={200} height={30} />
             </section>
-
           </section>
           </Providers>
         </body>

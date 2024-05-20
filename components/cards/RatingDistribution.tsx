@@ -4,8 +4,6 @@ import { starRatings } from "@/constants"
 import { Rating } from "react-simple-star-rating"
 
 const RatingDistribution = ({starsCount}:{starsCount: { [key: number]: number }}) => {
-
-
   return (
     <section className="flex flex-col justify-start">
             <h1 className='font-semibold text-lg md:text-xl lg:text-2xl mb-2 text-gray-800'>Rating Distribution</h1>

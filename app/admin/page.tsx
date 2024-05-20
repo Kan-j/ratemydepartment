@@ -16,7 +16,7 @@ interface Props {
 }
 
 
-const page = async({searchParams}: Props) => {
+const AdminHomePage = async({searchParams}: Props) => {
   const q = parseInt(searchParams['q'] || '')
   const y = parseInt(searchParams['y'] || '')
 
@@ -35,7 +35,6 @@ const page = async({searchParams}: Props) => {
           <QuarterSelector screen='small'/>
         </section>
         <SmallScreenInput/>
-        
       </section>
       
       {/* Dashboard metrics */}
@@ -49,17 +48,17 @@ const page = async({searchParams}: Props) => {
           <Tabs defaultValue="account" className="w-full">
             <TabsList>
               <TabsTrigger value="list">
-                <Image src="/assets/options.svg" alt="alt" width={24} height={24} className='' />
+                <Image src="/assets/options.svg" alt="alt" width={24} height={24}  />
               </TabsTrigger>
               <TabsTrigger value="chart">
-              <Image src="/assets/chart.svg" alt="alt" width={24} height={24} className='' />
+                <Image src="/assets/chart.svg" alt="alt" width={24} height={24}  />
               </TabsTrigger>
             </TabsList>
             <TabsContent value="list">
-              <DepartmentsPerformanceTable departmentAverages={departmentAverages}/>
+              {departmentAverages.length<1 ? <p className="">No data found</p>: <DepartmentsPerformanceTable departmentAverages={departmentAverages} quarter={q} year={y}/>}
             </TabsContent>
             <TabsContent value="chart">
-              <DepartmentPerformanceChart departmentAverages={departmentAverages}/>
+              {departmentAverages.length<1 ? <p className="">No data found</p>: <DepartmentPerformanceChart departmentAverages={departmentAverages}/>}
             </TabsContent>
           </Tabs>
       </section>
@@ -67,4 +66,4 @@ const page = async({searchParams}: Props) => {
   )
 }
 
-export default page
+export default AdminHomePage

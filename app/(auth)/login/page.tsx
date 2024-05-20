@@ -1,7 +1,6 @@
 import { LoginForm } from "@/components/forms/LoginForm"
-import Image from "next/image"
 
-const Page = () => {
+const LoginPage = () => {
 
   return (
     <section className="flex flex-col gap-6">
@@ -12,4 +11,4 @@ const Page = () => {
   )
 }
 
-export default Page
+export default LoginPage

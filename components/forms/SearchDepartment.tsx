@@ -23,7 +23,6 @@ const SearchDepartment = ({mydepartmentId}:{mydepartmentId:number}) => {
       setDepartments(departments);
     } catch (error) {
       console.error(error);
-      // Handle errors gracefully, e.g., display an error message to the user
     }
     if(!term) setDepartments(null)
   }
@@ -75,14 +74,7 @@ return (
       </div>
     )})}
   </div>
-
-  
-
-
-
-   
-
-  </div>
+</div>
 )
 }
 

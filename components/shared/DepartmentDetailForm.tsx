@@ -1,7 +1,7 @@
 import RatingDistribution from '../cards/RatingDistribution';
 import QuarterSelector from './QuarterSelector';
 
-interface DepartmentDetails {
+interface DepartmentDetailsProp {
     department: {
       id: number;
       name: string;
@@ -14,7 +14,7 @@ interface DepartmentDetails {
 
 
 
-const DepartmentDetail = ({department,totalRatings,starsCount,averageStars}:DepartmentDetails) => {    
+const DepartmentDetail = ({department,totalRatings,starsCount,averageStars}:DepartmentDetailsProp) => {    
     
   return (
     <section className='flex h-full flex-col gap-6 mt-2 md:mt-0 md:gap-0 mx-auto justify-start md:items-start md:flex-row md:justify-around w-full md:pt-10 lg:pt-20'>
