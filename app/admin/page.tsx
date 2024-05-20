@@ -17,8 +17,12 @@ interface Props {
 
 
 const AdminHomePage = async({searchParams}: Props) => {
-  const q = parseInt(searchParams['q'] || '')
-  const y = parseInt(searchParams['y'] || '')
+  const today = new Date();
+  const currentYear = today.getFullYear();
+  const currentQuarter = Math.ceil((today.getMonth() + 1) / 3); 
+  const q = parseInt(searchParams['q'] || '')|| currentQuarter
+  const y = parseInt(searchParams['y'] || '')|| currentYear
+
 
   const {
     totalDepartments,
