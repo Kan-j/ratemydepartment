@@ -92,7 +92,7 @@ const RatingForm = ({department, email, pathname, children}:{department:{
                     {/* <Button className="bg-blue-400"><span className='pr-2 text-lg'>Rate</span>  
                     <Rating size={24} allowHover={false} readonly={true} initialValue={1}  iconsCount={1} fillColor='#ffffff'/></Button> */}
                 </DialogTrigger>
-                <DialogContent className=" w-full text-gray-800">
+                <DialogContent className=" w-full text-gray-800  max-h-screen">
                     <DialogHeader>
                     <DialogTitle >
                         <h1 className='font-extrabold text-xl'>
@@ -139,9 +139,12 @@ const RatingForm = ({department, email, pathname, children}:{department:{
                                 </FormItem>
                             )}
                             />
-
+                            <section className="flex flex-col">
                             <label className='text-sm font-medium'>How satisfied are you with the service provided?</label>
+                            <p className="text-sm text-gray-600 mb-1">(hover over the stars to select)</p>
                             <Rating className='block' size={24}  onClick={handleRating} />
+                            </section>
+                           
                             {/* <DialogClose className='flex w-full mt-6 mb-3 text-white'> */}
                                 <Button type="submit" className="w-full mt-6 mb-3 bg-blue-500 text-white">Submit</Button>
                             {/* </DialogClose> */}

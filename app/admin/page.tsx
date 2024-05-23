@@ -26,7 +26,8 @@ const AdminHomePage = async({searchParams}: Props) => {
 
   const {
     totalDepartments,
-    totalRatings,
+    // totalRatings,
+    overallAverageRating,
     highestRating,
     lowestRating,
     departmentAverages} = await getDepartmentStatistics(q, y)
@@ -43,8 +44,8 @@ const AdminHomePage = async({searchParams}: Props) => {
       
       {/* Dashboard metrics */}
       <section className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4'>
-          <PerformanceCard title='Total Departments Rated' value={totalDepartments} key={1}/>
-          <PerformanceCard title='Total Feedback Count' value={totalRatings} key={2}/>
+          <PerformanceCard title='Overall Corporate Score' value={overallAverageRating} key={1}/>
+          <PerformanceCard title='Total Departments Rated' value={totalDepartments} key={5}/>
           <PerformanceCard title='Highest Rating' value={highestRating} key={3}/>
           <PerformanceCard title='Lowest Rating' value={lowestRating} key={4}/>
       </section>

@@ -35,7 +35,7 @@ export async function getDepartmentDetails(id:number,quarter: number = 0, year: 
 
     const averageStars =
     totalRatings > 0
-      ? (parseFloat((department.ratings.reduce((sum, rating) => sum + rating.stars, 0) / totalRatings).toString())).toFixed(1)
+      ? (parseFloat((department.ratings.reduce((sum, rating) => sum + rating.stars, 0) / totalRatings).toString())).toFixed(2)
       : 0.0;
 
     return {
@@ -180,7 +180,7 @@ export async function getDepartmentStatistics(quarter: number = 0, year: number 
           ? parseFloat(
               (
                 department.ratings.reduce((sum, rating) => sum + rating.stars, 0) / totalRatings
-              ).toFixed(1)
+              ).toFixed(2)
             )
           : 0;
       return { id: department.id, name: department.name, averageRating };
@@ -188,11 +188,22 @@ export async function getDepartmentStatistics(quarter: number = 0, year: number 
 
     departmentAverages.sort((a, b) => b.averageRating - a.averageRating);
 
+    // Calculate overall average of all department average ratings
+    const overallAverageRating =
+      departmentAverages.length > 0
+        ? parseFloat(
+            (
+              departmentAverages.reduce((sum, department) => sum + department.averageRating, 0) / departmentAverages.length
+            ).toFixed(2)
+          )
+        : 0;
+
     return {
       totalDepartments,
       totalRatings,
       highestRating,
       lowestRating,
+      overallAverageRating,
       departmentAverages,
     };
   } catch (error) {
@@ -248,7 +259,7 @@ export async function getDepartmentDetailsForAdmin(id: number, quarter: number =
         ? parseFloat(
           (
             department.ratings.reduce((sum: number, rating: any) => sum + rating.stars, 0) / totalRatings
-          ).toFixed(1)
+          ).toFixed(2)
         )
         : 0.0;
 
