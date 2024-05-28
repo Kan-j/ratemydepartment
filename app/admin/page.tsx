@@ -50,7 +50,7 @@ const AdminHomePage = async({searchParams}: Props) => {
           <PerformanceCard title='Lowest Rating' value={lowestRating} key={4}/>
       </section>
       <section className='mt-3 bg-blue-100 rounded-lg px-4 py-2 w-full'>
-          <Tabs defaultValue="account" className="w-full">
+          <Tabs defaultValue="list" className="w-full">
             <TabsList>
               <TabsTrigger value="list">
                 <Image src="/assets/options.svg" alt="alt" width={24} height={24}  />
