@@ -49,7 +49,7 @@ export const LoginForm = () => {
     <section className="w-72 sm:w-80 md:w-96">
       <section className="flex flex-col items-center gap-4 mb-3">
         <Image src="/assets/vra-logo.jpg" className="  bg-white" alt="VRA logo" width={120} height={30} />
-        <h3 className="font-bold text-2xl text-blue-400">RateYour<span className="text-white bg-blue-400 px-2">Department</span></h3>
+        <h3 className="font-bold text-2xl text-blue-400">RateA<span className="text-white bg-blue-400 px-2">Department</span></h3>
       </section>
       
 

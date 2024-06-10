@@ -1,32 +1,9 @@
 "use client"
 
-import React, { useState } from 'react'
-import { Button } from '../ui/button'
-import { toggleRatingPublished } from '@/lib/actions';
+import React from 'react'
 import { FaDownload } from 'react-icons/fa';
 import {useCSVDownloader} from 'react-papaparse';
 
-interface RatingList {
-    ratings: {
-    id: number;
-    stars: number;
-    ratedByUserId: number;
-    likes: string;
-    dislikes: string;
-    improvements: string;
-    isPublished: boolean;
-    ratedByUser: {
-      id: number;
-      name: string;
-      departmentId: number;
-      department: {
-        // Define the structure of the department object if needed
-        id: number;
-        name: string;
-        // Add more properties if necessary
-      };
-    }}[]
-  }
 
 const DownloadButton = ({ratingCsvJSON}:any) => {
    const {CSVDownloader, Type} = useCSVDownloader()

@@ -28,15 +28,9 @@ import {
 
 
 const formSchema = z.object({
-    likes:z.string().min(6, {
-        message: "Should have at least 6 characters.",
-      }),
-    dislikes:z.string().min(6, {
-        message: "Should have at least 6 characters.",
-      }),
-    improvements:z.string().min(6, {
-        message: "Should have at least 6 characters.",
-      }),
+    likes:z.string(),
+    dislikes:z.string(),
+    improvements:z.string(),
 });
 
 
@@ -70,6 +64,9 @@ const RatingForm = ({department, email, pathname, children}:{department:{
         const userDetails = await fetch(`/api/department?email=${email}`)
         const response = await userDetails.json()
         const userId = response.user.id;
+        if(!rating){
+            return  alert("Please select the stars before rating")
+        }
         await createRating({departmentId: department.id,likes:values.likes, dislikes: values.dislikes,improvements: values.improvements,path:pathname,stars:rating,userId:userId})
         toast(`Your rating has been sent`,{
              position: 'top-center',
@@ -105,7 +102,7 @@ const RatingForm = ({department, email, pathname, children}:{department:{
                             name="likes"
                             render={({ field }) => (
                                 <FormItem>
-                                <FormLabel>What did you LIKE about the services provided?</FormLabel>
+                                <FormLabel>What do you LIKE about our services?</FormLabel>
                                 <FormControl>
                                     <Textarea placeholder="I like how they ..." {...field} />
                                 </FormControl>
@@ -118,7 +115,7 @@ const RatingForm = ({department, email, pathname, children}:{department:{
                             name="dislikes"
                             render={({ field }) => (
                                 <FormItem>
-                                <FormLabel>What did you NOT LIKE about the services provided?</FormLabel>
+                                <FormLabel>What do you NOT LIKE about our services?</FormLabel>
                                 <FormControl>
                                 <Textarea placeholder="I did not like ..." {...field}/>
                                 </FormControl>
@@ -141,7 +138,7 @@ const RatingForm = ({department, email, pathname, children}:{department:{
                             />
                             <section className="flex flex-col">
                             <label className='text-sm font-medium'>How satisfied are you with the service provided?</label>
-                            <p className="text-sm text-gray-600 mb-1">(hover over the stars to select)</p>
+                            <p className="text-sm text-gray-600 mb-1">(hover over the stars and click to rate)</p>
                             <Rating className='block' size={24}  onClick={handleRating} />
                             </section>
                            

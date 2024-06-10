@@ -125,7 +125,93 @@ export async function updateRating({ ratingId, likes, dislikes, improvements, pa
 }
 
 
-export async function getDepartmentStatistics(quarter: number = 0, year: number = 0) {
+// export async function getDepartmentStatistics(quarter: number = 0, year: number = 0) {
+//   try {
+//     const today = new Date();
+//     const currentYear = year || today.getFullYear();
+//     const currentQuarter = quarter || Math.ceil((today.getMonth() + 1) / 3); // Calculate current quarter if not provided
+
+//     const departments = await prisma.department.findMany({
+//       where: {
+//         ratings: {
+//           some: {
+//             AND: [
+//               { year: currentYear },
+//               { quarter: currentQuarter },
+//             ],
+//           },
+//         },
+//       },
+//       include: {
+//         ratings: {
+//           where: {
+//             year: currentYear,
+//             quarter: currentQuarter,
+//           },
+//           select: { stars: true }, // Select necessary fields
+//         },
+//       },
+//     });
+
+//     const totalDepartments = departments.length;
+//     const totalRatings = departments.reduce((acc, department) => acc + department.ratings.length, 0);
+
+//     // Calculate highest and lowest rating
+//     let highestRating = 0;
+//     let lowestRating = 5;
+//     departments.forEach(department => {
+//       department.ratings.forEach(rating => {
+//         highestRating = Math.max(highestRating, rating.stars);
+//         lowestRating = Math.min(lowestRating, rating.stars);
+//       });
+//     });
+
+//     // Set lowestRating to 0 if no ratings exist
+//     if (totalRatings === 0) {
+//       lowestRating = 0;
+//     }
+    
+
+//     // Calculate average rating for each department and sort departments by average rating
+//     const departmentAverages = departments.map(department => {
+//       const totalRatings = department.ratings.length;
+//       const averageRating =
+//         totalRatings > 0
+//           ? parseFloat(
+//               (
+//                 department.ratings.reduce((sum, rating) => sum + rating.stars, 0) / totalRatings
+//               ).toFixed(2)
+//             )
+//           : 0;
+//       return { id: department.id, name: department.name, averageRating };
+//     });
+
+//     departmentAverages.sort((a, b) => b.averageRating - a.averageRating);
+
+//     // Calculate overall average of all department average ratings
+//     const overallAverageRating =
+//       departmentAverages.length > 0
+//         ? parseFloat(
+//             (
+//               departmentAverages.reduce((sum, department) => sum + department.averageRating, 0) / departmentAverages.length
+//             ).toFixed(2)
+//           )
+//         : 0;
+
+//     return {
+//       totalDepartments,
+//       totalRatings,
+//       highestRating,
+//       lowestRating,
+//       overallAverageRating,
+//       departmentAverages,
+//     };
+//   } catch (error) {
+//     console.error(error);
+//     throw new Error("An error occurred fetching department statistics"); // Re-throw for client-side handling
+//   }
+// }
+export async function getDepartmentStatistics(quarter = 0, year = 0) {
   try {
     const today = new Date();
     const currentYear = year || today.getFullYear();
@@ -170,7 +256,6 @@ export async function getDepartmentStatistics(quarter: number = 0, year: number 
     if (totalRatings === 0) {
       lowestRating = 0;
     }
-    
 
     // Calculate average rating for each department and sort departments by average rating
     const departmentAverages = departments.map(department => {
@@ -198,6 +283,40 @@ export async function getDepartmentStatistics(quarter: number = 0, year: number 
           )
         : 0;
 
+     // Upsert department rankings
+     for (const department of departmentAverages) {
+      const existingRanking = await prisma.departmentRanking.findFirst({
+        where: {
+            departmentId: department.id,
+            year: currentYear,
+            quarter: currentQuarter,
+        },
+      });
+
+      if (existingRanking) {
+        await prisma.departmentRanking.update({
+          where: {
+            id: existingRanking.id,
+          },
+          data: {
+            averageRating: department.averageRating,
+            // isPublished: false, // or true depending on your logic
+          },
+        });
+      } else {
+        await prisma.departmentRanking.create({
+          data: {
+            departmentId: department.id,
+            averageRating: department.averageRating,
+            isPublished: false, // or true depending on your logic
+            year: currentYear,
+            quarter: currentQuarter,
+          },
+        });
+      }
+    }
+
+    
     return {
       totalDepartments,
       totalRatings,
@@ -211,6 +330,8 @@ export async function getDepartmentStatistics(quarter: number = 0, year: number 
     throw new Error("An error occurred fetching department statistics"); // Re-throw for client-side handling
   }
 }
+
+
 
 export async function getDepartmentDetailsForAdmin(id: number, quarter: number = 0, year: number = 0) {
   try {
@@ -306,3 +427,336 @@ export async function toggleRatingPublished({ ratingIds }: TogglePublishedParams
   }
 }
 
+interface GetDepartmentRankingDataParams {
+  quarter?: number;
+  year?: number;
+  departmentId?: number;
+}
+
+// export async function getDepartmentRankingData({ quarter = 0, year = 0, departmentId }: GetDepartmentRankingDataParams) {
+//   try {
+//     const today = new Date();
+//     const currentYear = year || today.getFullYear();
+//     const currentQuarter = quarter || Math.ceil((today.getMonth() + 1) / 3);
+
+//     // Fetch only published department rankings for the specified or current year and quarter
+//     const departmentRankings = await prisma.departmentRanking.findMany({
+//       where: {
+//         year: currentYear,
+//         quarter: currentQuarter,
+//         isPublished: true,
+//       },
+//       include: {
+//         department: true,
+//       },
+//       orderBy: {
+//         averageRating: 'desc',
+//       },
+//     });
+
+//     if (departmentRankings.length === 0) {
+//       return {
+//         corporateScore:0,
+//         highestAverageRating:0,
+//         lowestAverageRating:0,
+//         departmentRankings:[],
+//         departmentAverageRating:0
+//       }
+//     }
+
+//     // Calculate the corporate score (average of all scores)
+//     const totalScore = departmentRankings.reduce((sum, ranking) => sum + ranking.averageRating, 0);
+//     const corporateScore = parseFloat((totalScore / departmentRankings.length).toFixed(2));
+
+//     // Determine the highest and lowest average ratings
+//     const highestAverageRating = departmentRankings[0].averageRating;
+//     const lowestAverageRating = departmentRankings[departmentRankings.length - 1].averageRating;
+
+//     // Get the average rating of the specified department, if departmentId is provided
+//     let departmentAverageRating = null;
+//     if (departmentId) {
+//       const departmentRanking = departmentRankings.find(ranking => ranking.departmentId === departmentId);
+//       if (departmentRanking) {
+//         departmentAverageRating = departmentRanking.averageRating;
+//       } else {
+//         throw new Error('Specified department has no published rankings for the specified period.');
+//       }
+//     }
+
+//     return {
+//       departmentRankings,
+//       corporateScore,
+//       highestAverageRating,
+//       lowestAverageRating,
+//       departmentAverageRating,
+//     };
+//   } catch (error) {
+//     console.error(error);
+//     throw new Error('An error occurred fetching department ranking data');
+//   }
+// }
+
+export async function getDepartmentRankingData(quarter = 0, year = 0, departmentId:any) {
+  try {
+    const today = new Date();
+    const currentYear = year || today.getFullYear();
+    const currentQuarter = quarter || Math.ceil((today.getMonth() + 1) / 3);
+
+    // Fetch only published department rankings for the specified or current year and quarter
+    const departmentRankings = await prisma.departmentRanking.findMany({
+      where: {
+        year: currentYear,
+        quarter: currentQuarter,
+        isPublished: true,
+      },
+      include: {
+        department: true,
+      },
+      orderBy: {
+        averageRating: 'desc',
+      },
+    });
+
+    if (departmentRankings.length === 0) {
+      return {
+        corporateScore: 0,
+        highestAverageRating: 0,
+        lowestAverageRating: 0,
+        departmentRankings: [],
+        departmentAverageRating: 0,
+      };
+    }
+
+    // Map to the desired structure
+    const formattedRankings = departmentRankings.map(ranking => ({
+      id: ranking.id,
+      name: ranking.department.name,
+      averageRating: ranking.averageRating,
+      departmentId : ranking.departmentId
+    }));
+
+    // Calculate the corporate score (average of all scores)
+    const totalScore = formattedRankings.reduce((sum, ranking) => sum + ranking.averageRating, 0);
+    const corporateScore = parseFloat((totalScore / formattedRankings.length).toFixed(2));
+
+    // Determine the highest and lowest average ratings
+    const highestAverageRating = formattedRankings[0].averageRating;
+    const lowestAverageRating = formattedRankings[formattedRankings.length - 1].averageRating;
+
+    // Get the average rating of the specified department, if departmentId is provided
+    let departmentAverageRating = 0;
+    if (departmentId) {
+      const departmentRanking = formattedRankings.find(ranking => ranking.departmentId === departmentId);
+      if (departmentRanking) {
+        departmentAverageRating = departmentRanking.averageRating;
+      } else {
+        throw new Error('Specified department has no published rankings for the specified period.');
+      }
+    }
+
+    return {
+      departmentRankings: formattedRankings,
+      corporateScore,
+      highestAverageRating,
+      lowestAverageRating,
+      departmentAverageRating,
+    };
+  } catch (error) {
+    console.error(error);
+    throw new Error('An error occurred fetching department ranking data');
+  }
+}
+
+
+
+
+
+
+// Get the IDs of the Department Ranking
+export async function getDepartmentRankingIds( quarter = 0, year = 0 ) {
+  try {
+    const today = new Date();
+    const currentYear = year || today.getFullYear();
+    const currentQuarter = quarter || Math.ceil((today.getMonth() + 1) / 3);
+
+    // Fetch IDs of department rankings for the specified or current year and quarter
+    const departmentRankingIds = await prisma.departmentRanking.findMany({
+      where: {
+        year: currentYear,
+        quarter: currentQuarter,
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    if (departmentRankingIds.length === 0) {
+      return departmentRankingIds;
+    }
+  
+
+    return departmentRankingIds.map(ranking => ranking.id) 
+    
+  } catch (error) {
+    console.error(error);
+    throw new Error('An error occurred fetching department ranking IDs');
+  }
+}
+
+
+interface TogglePublishedStatusParams {
+  departmentRankingIds: number[];
+}
+
+export async function togglePublishedStatus({ departmentRankingIds }: TogglePublishedStatusParams) {
+  try {
+    // Fetch the current isPublished status of the given IDs
+    const rankings = await prisma.departmentRanking.findMany({
+      where: {
+        id: {
+          in: departmentRankingIds,
+        },
+      },
+      select: {
+        id: true,
+        isPublished: true,
+      },
+    });
+
+    if (rankings.length === 0) {
+      throw new Error('No department rankings found for the provided IDs.');
+    }
+
+    // Toggle the isPublished status
+    const updatedRankings = await Promise.all(
+      rankings.map(async (ranking) => {
+        return prisma.departmentRanking.update({
+          where: { id: ranking.id },
+          data: { isPublished: !ranking.isPublished },
+        });
+      })
+    );
+
+    return {
+      updatedRankings,
+    };
+  } catch (error) {
+    console.error(error);
+    throw new Error('An error occurred while toggling the published status');
+  }
+}
+
+export async function getPublishedState({ departmentRankingIds }: { departmentRankingIds: number[] }) {
+  try {
+    const rankings = await prisma.departmentRanking.findMany({
+      where: {
+        id: {
+          in: departmentRankingIds,
+        },
+      },
+      select: {
+        id: true,
+        isPublished: true,
+      },
+    });
+
+    return {
+      rankings,
+    };
+  } catch (error) {
+    console.error('Error fetching published state:', error);
+    throw new Error('An error occurred fetching the published state');
+  }
+}
+
+export async function getCommentsPublishedState( {ratingIds}:{ratingIds: number[]}) {
+  try {
+    const ratings = await prisma.rating.findMany({
+      where: {
+        id: {
+          in: ratingIds,
+        },
+      },
+      select: {
+        id: true,
+        isPublished: true,
+      },
+    });
+
+    return { ratings };
+  } catch (error) {
+    console.error('Error fetching published state:', error);
+    throw new Error('Error fetching published state');
+  }
+}
+
+
+export async function getRatingsForTheQuarterAndYear(quarter: number,year: number) {
+  try {
+    const ratings = await prisma.rating.findMany({
+      where: {
+        year,
+      },
+      include: {
+        department: true,
+        ratedByUser: {
+          include: {
+            department: true,
+          },
+        },
+      },
+    });
+
+    const transformedRatings= ratings.map(rating => ({
+      "Department Rated": rating.department.name,
+      "Rater": rating.ratedByUser.name,
+      "Rater's Department": rating.ratedByUser.department.name,
+      "likes": rating.likes,
+      "dislikes": rating.dislikes,
+      "improvement": rating.improvements,
+      "Stars rating": rating.stars,
+      "quarter": rating.quarter,
+      "year": rating.year,
+    }));
+
+    return transformedRatings;
+  } catch (error) {
+    console.error('Error fetching ratings for the year:', error);
+    throw new Error('An error occurred while fetching ratings for the specified year');
+  }
+}
+
+export async function getRatingsForYear(year: number) {
+  try {
+    const ratings = await prisma.rating.findMany({
+      where: {
+        year,
+      },
+      include: {
+        department: true,
+        ratedByUser: {
+          include: {
+            department: true,
+          },
+        },
+      },
+    });
+
+    const transformedRatings= ratings.map(rating => ({
+      "Department Rated": rating.department.name,
+      "Rater": rating.ratedByUser.name,
+      "Rater's Department": rating.ratedByUser.department.name,
+      "likes": rating.likes,
+      "dislikes": rating.dislikes,
+      "improvement": rating.improvements,
+      "Stars rating": rating.stars,
+      "quarter": rating.quarter,
+      "year": rating.year,
+    }));
+
+    return transformedRatings;
+  } catch (error) {
+    console.error('Error fetching ratings for the year:', error);
+    throw new Error('An error occurred while fetching ratings for the specified year');
+  }
+}

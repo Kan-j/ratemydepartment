@@ -5,8 +5,8 @@ import Image from 'next/image';
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Rate My Department",
-  description: "Here is the rate my department app for VRA",
+  title: "Rate A Department",
+  description: "Here is the rate a department app for VRA",
 };
 
 export default function AuthLayout({

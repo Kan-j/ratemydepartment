@@ -1,13 +1,16 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "../globals.css";
-import Providers from "@/components/auth/Providers";
-import TopBar from "@/components/shared/TopBar";
-import LeftSideBar from '@/components/shared/LeftSideBar';
+
+
 import Image from "next/image";
 import { ToastContainer } from "react-toastify";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
+import React from "react";
+import LeftSideBar from '../../components/shared/LeftSideBar';
+import TopBar from '../../components/shared/TopBar';
+import Providers from '../../components/auth/Providers';
 
 
 const inter = Inter({ subsets: ["latin"] });
@@ -23,14 +26,14 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-
   const session = await getServerSession()
   const email = session?.user?.email
+  
   const response = await fetch(`http://127.0.0.1:3000/api/department?email=${email}`)
-  const userDetails= await response.json()
-  const {isAdmin} = userDetails.user
+  const  userDetails= await response.json()
+  const {departmentId} = userDetails.user
 
-  if(!isAdmin) redirect('/')
+
 
   return (
     <Providers>
@@ -38,7 +41,7 @@ export default async function RootLayout({
       <body className={inter.className}>
         <TopBar/>
           <main className="flex flex-row">
-            <LeftSideBar/>
+            <LeftSideBar departmentId={departmentId}/>
                 <section className="flex min-h-screen flex-1 flex-col bg-white">
                     <div className="h-full flex flex-col px-4 pt-28 sm:px-4 2xl:px-32">
                     {children}

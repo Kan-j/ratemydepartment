@@ -3,11 +3,13 @@ import { Inter } from "next/font/google";
 import "../globals.css";
 import Image from 'next/image';
 import Providers from "@/components/auth/Providers";
+
 const inter = Inter({ subsets: ["latin"] });
 
+
 export const metadata: Metadata = {
-  title: "Rate My Department",
-  description: "Here is the rate my department app for VRA",
+  title: "Rate A Department",
+  description: "Here is the rate a department app for VRA",
 };
 
 export default function RootLayout({

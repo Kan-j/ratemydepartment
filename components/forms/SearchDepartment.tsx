@@ -16,7 +16,6 @@ const SearchDepartment = ({mydepartmentId}:{mydepartmentId:number}) => {
   const email = session?.user?.email
 
   const handleSearch = async(term: string)=> {
-    
     try {
       const response = await fetch(`/api/search?term=${term}`);
       const departments = await response.json()
@@ -72,7 +71,8 @@ return (
           <button className="w-full text-left">{department.name}</button>
         </RatingForm>
       </div>
-    )})}
+    )}
+  )}
   </div>
 </div>
 )

@@ -4,8 +4,8 @@ export const sidebarLinks = [
       route: "/admin",
       label: "Dashboard",
     },
-
   ];
+
 
 export const starRatings = [
   { label: 'Exceptional', value: 5 },

@@ -1,5 +1,5 @@
 import prisma from "@/lib/prisma";
-import crypto from 'crypto'
+
 
 interface RequestBody {
     email: string;

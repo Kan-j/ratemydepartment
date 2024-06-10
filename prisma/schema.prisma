@@ -30,6 +30,7 @@ model Department {
   name        String   @unique
   ratings     Rating[]
   users       User[]    // One-to-many relation
+  departmentRanking  DepartmentRanking[]  // One-to-many relation
   // Additional fields specific to departments (optional)
 }
 
@@ -47,4 +48,14 @@ model Rating {
   ratedByUserId      Int        // ID of the user giving the rating
   department    Department @relation(fields: [departmentId], references: [id])
   ratedByUser        User       @relation(fields: [ratedByUserId], references: [id]) // Added relation details
+}
+
+model DepartmentRanking {
+  id            Int        @id @default(autoincrement())
+  departmentId  Int
+  averageRating Float
+  isPublished   Boolean    @default(false)
+  year          Int
+  quarter       Int
+  department    Department @relation(fields: [departmentId], references: [id])
 }

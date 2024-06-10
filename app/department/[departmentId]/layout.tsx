@@ -4,6 +4,7 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import NavBar from "@/components/shared/NavBar";
 import { getServerSession } from "next-auth"
+import { redirect } from "next/navigation";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -14,11 +15,13 @@ export default async function RootLayout({
   children: React.ReactNode;
 }) {
   const session = await getServerSession()
+  if(!session) redirect('/')
   const email = session?.user?.email
-  
+
   const response = await fetch(`http://127.0.0.1:3000/api/department?email=${email}`)
   const  userDetails= await response.json()
-  const {departmentId, isAdmin} = userDetails.user
+  
+  const {departmentId, isAdmin} = userDetails?.user
   
   return (
     <html lang="en">

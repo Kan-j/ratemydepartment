@@ -15,7 +15,7 @@ return (
     <nav className="fixed top-0 z-30 flex w-full items-center justify-between  px-6 py-3 bg-white">
         <div className="flex items-center gap-4">
             {/* <Image src="/assets/logo.svg" alt="logo" width={28} height={28} /> */}
-            <Link href="/" className="text-gray-500 hover:bg-transparent font-bold text-lg py-2 max-xs:hidden">RateYour<span className="text-white bg-blue-500 px-2 py-2">Department</span></Link>
+            <Link href="/" className="text-gray-500 hover:bg-transparent font-bold text-lg py-2 max-xs:hidden">RateA<span className="text-white bg-blue-500 px-2 py-2">Department</span></Link>
         </div>
 
         <section className="flex items-center gap-4">

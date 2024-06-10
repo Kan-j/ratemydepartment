@@ -19,10 +19,13 @@ interface departmentAveragesProps {
     averageRating: number
   }[],
   year:number,
-  quarter: number
+  quarter: number,
+  isAdmin: boolean,
+  ratingsForTheYear?: any,
+  ratingForTheQuarter?: any
 }
 
-const DepartmentsPerformanceTable = ({departmentAverages, quarter, year}: departmentAveragesProps) => {
+const DepartmentsPerformanceTable = ({departmentAverages, quarter, year,isAdmin, ratingsForTheYear, ratingForTheQuarter}: departmentAveragesProps) => {
   const {CSVDownloader, Type} = useCSVDownloader()
   const rankedDepartments = departmentAverages.map((department, index) => {
     return {
@@ -34,16 +37,40 @@ const DepartmentsPerformanceTable = ({departmentAverages, quarter, year}: depart
   return (
     <section className='w-full'>
     <Table className='w-full'>
-      <TableCaption> 
-        <CSVDownloader
-      type={Type.Button}
-      filename={'DepartmentRanking_Q'+quarter + '_'+ year}
-      bom={true}
-      className="bg-blue-500 text-slate-50 hover:bg-blue-900/90 dark:bg-slate-50 dark:text-slate-900 dark:hover:bg-slate-50/90 px-3 rounded-md"
-      data={rankedDepartments}
-    >
-  Download 
-    </CSVDownloader></TableCaption>
+      {isAdmin && <TableCaption>
+        <section className="w-full flex gap-2 justify-end">
+          <CSVDownloader
+                type={Type.Button}
+                filename={'DepartmentRanking_Q'+quarter + '_'+ year}
+                bom={true}
+                className="bg-blue-500 text-slate-50 hover:bg-blue-900/90 dark:bg-slate-50 dark:text-slate-900 dark:hover:bg-slate-50/90 px-3 rounded-md"
+                data={rankedDepartments}
+              >
+            Download List
+              </CSVDownloader>
+          <CSVDownloader
+                type={Type.Button}
+                filename={'DepartmentRatings' + '_'+ year}
+                bom={true}
+                className="bg-blue-500 text-slate-50 hover:bg-blue-900/90 dark:bg-slate-50 py-2 dark:text-slate-900 dark:hover:bg-slate-50/90 px-3 rounded-md"
+                data={ratingsForTheYear}
+              >
+            Download Quarter's Ratings
+              </CSVDownloader>
+          <CSVDownloader
+                type={Type.Button}
+                filename={'DepartmentRatings' + '_'+ year}
+                bom={true}
+                className="bg-blue-500 text-slate-50 hover:bg-blue-900/90 dark:bg-slate-50 py-2 dark:text-slate-900 dark:hover:bg-slate-50/90 px-3 rounded-md"
+                data={ratingsForTheYear}
+              >
+            Download Year's rating
+              </CSVDownloader>
+        </section>
+        
+    
+    </TableCaption>}
+      
       <TableHeader>
         <TableRow>
           <TableHead className="w-1/3 text-gray-900">Ranking</TableHead>
@@ -56,7 +83,7 @@ const DepartmentsPerformanceTable = ({departmentAverages, quarter, year}: depart
           return (
             <TableRow key={index}>
               <TableCell className="font-medium">#{index+1}</TableCell>
-              <TableCell><Link href={`/admin/departments/${department.id}`}>{department.name}</Link> </TableCell>
+              <TableCell>{isAdmin? <Link href={`/admin/departments/${department.id}`}>{department.name}</Link>: department.name} </TableCell>
               <TableCell className="">{department.averageRating}</TableCell>
             </TableRow>
           )

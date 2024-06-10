@@ -1,8 +1,8 @@
 "use client"
 
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Button } from '../ui/button'
-import { toggleRatingPublished } from '@/lib/actions';
+import { toggleRatingPublished, getCommentsPublishedState } from '@/lib/actions';
 
 
 interface RatingList {
@@ -31,11 +31,29 @@ const PublishButton = ({ratings}: RatingList) => {
     const ratingIds = ratings.map((rating)=> rating.id)
     const [publishedButtonState, setpublishedButtonState] = useState<'Publish' | 'Unpublish'>('Publish')
 
-    const handleClick = async()=> {
-        const ratingsUpdated = await toggleRatingPublished({ratingIds: ratingIds})
-        ratingsUpdated[0].isPublished? setpublishedButtonState('Unpublish') : setpublishedButtonState('Publish')
-    }
-    
+    useEffect(() => {
+      const fetchPublishedState = async () => {
+        try {
+          const { ratings } = await getCommentsPublishedState({ratingIds} );
+          const allPublished = ratings.every(rating => rating.isPublished);
+          setpublishedButtonState(allPublished ? 'Unpublish' : 'Publish');
+        } catch (error) {
+          console.error('Error fetching initial published state:', error);
+        }
+      };
+  
+      fetchPublishedState();
+    }, [ratingIds]);
+
+    const handleClick = async () => {
+      try {
+        const ratings = await toggleRatingPublished({ ratingIds });
+        const allPublished = ratings.every(rating => rating.isPublished);
+        setpublishedButtonState(allPublished ? 'Unpublish' : 'Publish');
+      } catch (error) {
+        console.error('Error toggling published status:', error);
+      }
+    };
   return (
     <>
         <Button variant={publishedButtonState === 'Unpublish' ?  'outline': 'default'} className="w-fit content-center" onClick={handleClick}>{publishedButtonState}</Button>

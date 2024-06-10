@@ -1,6 +1,6 @@
 "use client"
 
-import { useCallback, useEffect, useState } from "react"
+import { useEffect, useState } from "react"
 import {
   Popover,
   PopoverContent,
@@ -82,12 +82,12 @@ const QuarterSelector = ({screen}:{
                         <div className="flex gap-4 mb-3">
                             <select className="bg-white p-2" value={selectedQuarter} onChange={(e) => setSelectedQuarter(parseInt(e.target.value))}>
                             {quarters.map((quarter, index) => (
-                                <option value={quarter} className="px-2 py-2">Quarter {quarter}</option>
+                                <option value={quarter} key={index} className="px-2 py-2">Quarter {quarter}</option>
                             ))}
                             </select>
                             <select className="bg-white" value={selectedYear} onChange={(e) => setSelectedYear(parseInt(e.target.value))}>
                                 {years.map((year, index) => (
-                                    <option value={year}>{year}</option>
+                                    <option value={year} key={index}>{year}</option>
                                 ))}
                             </select>
                         </div>

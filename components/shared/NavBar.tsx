@@ -29,35 +29,35 @@ const NavBar = ({departmentId, isAdmin}:{departmentId: number, isAdmin: Boolean}
         <div className="navbar-center hidden lg:flex">
             <ul className="flex gap-4 px-1">
             <li>
-                <Link href="/" className="font-semibold hover:bg-transparent text-blue-500 text-lg">Home</Link>
+                <Link href="/" className="font-semibold hover:bg-transparent text-blue-500 text-lg">Rate</Link>
             </li>
             <li>
-                <Link href={`/department/${departmentId}`} className="font-semibold hover:bg-transparent text-gray-600 text-lg">My Department</Link>
+                <Link href={`/dashboard`} className="font-semibold hover:bg-transparent text-gray-600 text-lg">My Dashboard</Link>
             </li>
             </ul>
         </div>
         <div className=" gap-8 navbar-end">
             <QuarterSelector screen='big'/>
             <p className="mr-4">
-            <DropdownMenu>
-            <DropdownMenuTrigger className="text-gray-600 font-semibold text-sm md:text-lg ">{truncatedName}</DropdownMenuTrigger>
-            <DropdownMenuContent>
-            <DropdownMenuLabel>My Account</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            {isAdmin && <DropdownMenuItem>
-            <button onClick={()=>{router.push('/admin')}} className="text-blue-500 font-semibold">Admin Panel</button>
-            </DropdownMenuItem>}
-            <DropdownMenuItem className="lg:hidden">
-            <Link href="/" className="font-semibold hover:bg-transparent">Home</Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem className="lg:hidden">
-            <Link href={`/department/${departmentId}`} className="font-semibold hover:bg-transparent">My Department</Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-            <button onClick={()=> signOut()} className="text-red-600 font-semibold">Sign Out</button>
-            </DropdownMenuItem>
-            </DropdownMenuContent>
-        </DropdownMenu>
+                <DropdownMenu>
+                    <DropdownMenuTrigger className="text-gray-600 font-semibold text-sm md:text-lg ">{truncatedName}</DropdownMenuTrigger>
+                <DropdownMenuContent>
+                <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                {isAdmin && <DropdownMenuItem>
+                <button onClick={()=>{router.push('/admin')}} className="text-blue-500 font-semibold">Admin Panel</button>
+                </DropdownMenuItem>}
+                <DropdownMenuItem className="lg:hidden">
+                <Link href="/" className="font-semibold hover:bg-transparent">Home</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem className="lg:hidden">
+                <Link href={`/department/${departmentId}`} className="font-semibold hover:bg-transparent">My Department</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                <button onClick={()=> signOut()} className="text-red-600 font-semibold">Sign Out</button>
+                </DropdownMenuItem>
+                </DropdownMenuContent>
+                </DropdownMenu>
             </p>
         
         </div>
