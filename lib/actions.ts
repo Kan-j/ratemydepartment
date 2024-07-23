@@ -549,9 +549,10 @@ export async function getDepartmentRankingData(quarter = 0, year = 0, department
       const departmentRanking = formattedRankings.find(ranking => ranking.departmentId === departmentId);
       if (departmentRanking) {
         departmentAverageRating = departmentRanking.averageRating;
-      } else {
-        throw new Error('Specified department has no published rankings for the specified period.');
-      }
+      } 
+      // else {
+      //   throw new Error('Specified department has no published rankings for the specified period.');
+      // }
     }
 
     return {
@@ -691,11 +692,16 @@ export async function getCommentsPublishedState( {ratingIds}:{ratingIds: number[
 }
 
 
-export async function getRatingsForTheQuarterAndYear(quarter: number,year: number) {
+export async function getRatingsForTheQuarterAndYear(quarterInput?: number,yearInput?: number) {
   try {
+    const today = new Date();
+    const currentYear = yearInput || today.getFullYear();
+    const currentQuarter = quarterInput || Math.ceil((today.getMonth() + 1) / 3);
+
     const ratings = await prisma.rating.findMany({
       where: {
-        year,
+        year: currentYear,
+        quarter: currentQuarter
       },
       include: {
         department: true,

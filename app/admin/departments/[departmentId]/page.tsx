@@ -4,8 +4,9 @@ import RatingDistribution from "@/components/cards/RatingDistribution";
 import CommentCard from "@/components/cards/CommentCard";
 import { getDepartmentDetailsForAdmin } from "@/lib/actions";
 import PublishButton from "@/components/forms/PublishButton";
-import SearchBarAdmin from "@/components/forms/SearchBarAdmin";
+import SearchBarAdmin from "@/components/forms/SearchBar";
 import DownloadButton from "@/components/forms/DownloadButton";
+import CommentHeaderAdmin from "@/components/headers/CommentHeaderAdmin";
 
 interface Params {
   params:{
@@ -70,14 +71,15 @@ const AdminDepartmentDetails = async({params, searchParams}:Params) => {
       </section>
 
       <article className="flex flex-col">
-        <section className="grid grid-cols-2 mt-12 mb-6">
+       <CommentHeaderAdmin ratingsLength={24}/>
+        {/* <section className="grid grid-cols-2 mt-12 mb-6">
           <h1 className="text-xl md:text-2xl text-gray-700 font-semibold">Comments ({department.ratings.length})</h1>
           <section className="flex gap-3">
             <PublishButton ratings={department.ratings}/>
             <DownloadButton ratingCsvJSON={ratingCsvJSON}/>
           </section>
           
-        </section>
+        </section> */}
 
         <article className="flex flex-col gap-4">
           {department.ratings.map((rating:any, index:any)=> {

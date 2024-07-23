@@ -2,11 +2,12 @@
 import React from "react";
 import { getDepartmentDetailsForAdmin } from '@/lib/actions';
 import QuarterSelector from "../../../../components/shared/QuarterSelector";
-import SearchBarAdmin from '@/components/forms/SearchBarAdmin';
 import RatingDistribution from '@/components/cards/RatingDistribution';
 import PublishButton from '@/components/forms/PublishButton';
 import DownloadButton from '@/components/forms/DownloadButton';
 import CommentCard from '@/components/cards/CommentCard';
+import SearchBar from "@/components/forms/SearchBar";
+import CommentHeader from "@/components/headers/CommentHeader";
 
 interface Params {
   params:{
@@ -59,6 +60,13 @@ const UserDepartmentDetails = async({params, searchParams}:Params) => {
           <QuarterSelector screen="small"/>
         </section>
       </section>
+
+      <section className="flex flex-col  justify-end mb-6 md:mb-0 ">
+        <section className="flex justify-end w-2/6 ">
+          <SearchBar/>
+        </section>
+        <div className="border-b pb-4 mb-2 w-4/5"/>
+      </section>
       
       <section className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-0">
           <section className="w-full mx-auto">
@@ -73,9 +81,7 @@ const UserDepartmentDetails = async({params, searchParams}:Params) => {
       </section>
 
       <article className="flex flex-col">
-        <section className="grid grid-cols-2 mt-12 mb-6">
-          <h1 className="text-xl md:text-2xl text-gray-700 font-semibold">Comments ({department.ratings.length})</h1>
-        </section>
+        <CommentHeader ratingsLength={department.ratings.length} isMyDepartment={true}/>
 
         <article className="flex flex-col gap-4">
               {department.ratings.map((rating:any, index:any)=> {

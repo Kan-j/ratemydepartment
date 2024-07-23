@@ -6,6 +6,7 @@ import { Rating } from 'react-simple-star-rating'
 import { Button } from '../ui/button'
 import { FaPen } from 'react-icons/fa'
 import EditComment from '../forms/EditComment'
+import { FaEye } from 'react-icons/fa6'
 
 interface RatingDetails {
   showEdit: boolean,
@@ -41,11 +42,7 @@ const CommentCard = ({rating, key,showEdit}: RatingDetails) => {
           <h1 className="text-4xl text-gray-800 hidden sm:flex">.</h1>
           <Rating size={18} initialValue={rating.stars} allowHover={false} readonly={true} allowFraction={true}/>
         </div>
-        {showEdit && <EditComment rating={rating}>
-          <Button variant="outline" className="rounded-full p-3"><FaPen/></Button>
-        </EditComment>}
-        
-        
+        {showEdit && <FaEye size={23}/>}
     </div>
    <CommentsCardItem title="Likes" description={rating.likes}/>
    <CommentsCardItem title="Dislikes" description={rating.dislikes}/>

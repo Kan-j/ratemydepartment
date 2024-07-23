@@ -1,14 +1,32 @@
-import QuarterSelector from "@/components/shared/QuarterSelector"
-import SmallScreenInput from "@/components/shared/SmallScreenInput"
+import DepartmentListPagination from "@/components/cards/DepartmentListPagination"
+import SingleDepartmentListItem from "@/components/cards/SingleDepartmentListItem"
+import SearchBar from "@/components/forms/SearchBar"
+
 
 const page = () => {
   return (
     <div className="flex flex-col">
-      <section className="flex flex-col gap-4 justify-end mb-6 md:mb-0 md:hidden">
-        <section className="flex justify-end">
-          <QuarterSelector screen="small"/>
+       <section className="flex flex-col  justify-end mb-6 md:mb-0 ">
+        <section className="flex justify-end w-2/6 ">
+          <SearchBar/>
         </section>
-        <SmallScreenInput/>
+        <div className="border-b pb-4 mb-2 w-4/5"/>
+      </section>
+
+      <section className="flex flex-col gap-2">
+        <SingleDepartmentListItem/>
+        <SingleDepartmentListItem/>
+        <SingleDepartmentListItem/>
+        <SingleDepartmentListItem/>
+        <SingleDepartmentListItem/>
+        <SingleDepartmentListItem/>
+        <SingleDepartmentListItem/>
+        <SingleDepartmentListItem/>
+        <SingleDepartmentListItem/>
+        <SingleDepartmentListItem/>
+      </section>
+      <section className="w-4/5 flex justify-center mb-4 mt-4">
+        <DepartmentListPagination/>
       </section>
     </div>
   )

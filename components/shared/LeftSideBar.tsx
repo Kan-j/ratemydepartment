@@ -6,6 +6,9 @@ import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { FaFolder } from 'react-icons/fa'
 import { IoGrid } from 'react-icons/io5';
+import { FaRankingStar } from "react-icons/fa6";
+import { BiSolidReport } from "react-icons/bi";
+import { AiOutlineAudit } from "react-icons/ai";
 
 
 const LeftSideBar = (
@@ -18,12 +21,22 @@ const LeftSideBar = (
             {
                 icon: <IoGrid fontSize={22}/>,
                 route: "/dashboard",
-                label: "Corporate",
+                label: "Dashboard",
+              },
+              {
+                icon: <FaRankingStar fontSize={22}/>,
+                route: `/dashboard/rankings`,
+                label: "Ranking",
               },
               {
                 icon: <FaFolder fontSize={22}/>,
                 route: `/dashboard/departments/${departmentId}`,
                 label: "My Department",
+              },
+              {
+                icon: <BiSolidReport fontSize={22}/>,
+                route: `/dashboard/reports`,
+                label: "Reports",
               },
         ]
     }else{
@@ -32,7 +45,27 @@ const LeftSideBar = (
                 icon: <IoGrid fontSize={22}/>,
                 route: "/admin",
                 label: "Dashboard",
-              },
+            },
+            {
+                icon: <FaFolder fontSize={22}/>,
+                route: "/admin/departments",
+                label: "Departments",
+            },
+            {
+                icon: <FaRankingStar fontSize={22}/>,
+                route: "/admin/rankings",
+                label: "Rankings",
+            },
+            {
+                icon: <BiSolidReport fontSize={22}/>,
+                route: "/admin/reports",
+                label: "Reports",
+            },
+            {
+                icon: <AiOutlineAudit fontSize={22}/>,
+                route: "/admin/audit-trail",
+                label: "Audit Trail",
+            },
         ]
     }
 

@@ -2,6 +2,8 @@
 import React, { useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button';
 import { getPublishedState, togglePublishedStatus } from '@/lib/actions';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuTrigger } from '../ui/dropdown-menu';
+import { IoMenu } from 'react-icons/io5';
 
 
 const DepartmentRankingPublishButton = ({departmentRankingIds}:{departmentRankingIds: any}) => {
@@ -33,7 +35,29 @@ const DepartmentRankingPublishButton = ({departmentRankingIds}:{departmentRankin
     
   return (
     <>
+      <section className="flex items-center gap-2">
         <Button variant={publishedButtonState === 'Unpublish' ?  'outline': 'default'} className="w-fit content-center" onClick={handleClick}>{publishedButtonState}</Button>
+        <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline">
+                  <IoMenu fontSize={30}/>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-56">
+                  <DropdownMenuGroup>
+                    <DropdownMenuItem>
+                      <span>Download Quarter's Rating</span>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem>
+                      <span>Download Year's Rating</span>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem>
+                      <span>Download List</span>
+                    </DropdownMenuItem>
+                  </DropdownMenuGroup>
+                </DropdownMenuContent>
+            </DropdownMenu>
+      </section>
     </>
     
   )
