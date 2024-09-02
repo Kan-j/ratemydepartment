@@ -67,7 +67,7 @@ return (
         className="bg-white font-medium text-gray-800 rounded-md px-6 py-2 border-b-2 border-b-gray-100 hover:bg-gray-100"
         style={{ animationDelay: `${index * 100}ms` }}
       >
-        <RatingForm department={department} pathname={`/department/${department.id}`} key={department.id} email={email}>
+        <RatingForm department={department} pathname={`/dashboard/departments/${department.id}`} key={department.id} email={email}>
           <button className="w-full text-left">{department.name}</button>
         </RatingForm>
       </div>

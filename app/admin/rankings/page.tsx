@@ -1,4 +1,3 @@
-import PerformanceCard from '@/components/cards/PerformanceCard'
 import DepartmentPerformanceChart from '@/components/shared/DepartmentPerformanceChart'
 import DepartmentsPerformanceTable from '@/components/shared/DepartmentsPerformanceTable'
 import QuarterSelector from '@/components/shared/QuarterSelector'
@@ -8,7 +7,6 @@ import DepartmentRankingPublishButton from '@/components/forms/DepartmentRanking
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { getDepartmentStatistics,getDepartmentRankingIds, getRatingsForYear, getRatingsForTheQuarterAndYear } from '@/lib/actions'
-import Image from 'next/image'
 import { FaChartBar, FaHamburger } from 'react-icons/fa'
 import { GiHamburgerMenu } from 'react-icons/gi';
 
@@ -26,18 +24,10 @@ const RankingsPageAdmin = async({searchParams}: Props) => {
 
 
   const {
-    totalDepartments,
-    // totalRatings,
-    overallAverageRating,
-    highestRating,
-    lowestRating,
-    departmentAverages} = await getDepartmentStatistics(q, y)
+    departmentAverages
+  } = await getDepartmentStatistics(q, y)
 
     const departmentRankingIds = await getDepartmentRankingIds(q, y) 
-
-    const ratingsForTheYear = await getRatingsForYear(y || currentYear)
-
-    const ratingsForTheQuarterAndYear = await getRatingsForTheQuarterAndYear(q ,y)
 
 
   return (
@@ -50,11 +40,8 @@ const RankingsPageAdmin = async({searchParams}: Props) => {
       </section>
       
       {/* Dashboard metrics */}
-      <section className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4'>
-          <PerformanceCard title='Overall Corporate Score' value={overallAverageRating} key={1}/>
-          <PerformanceCard title='Total Departments Rated' value={totalDepartments} key={5}/>
-          <PerformanceCard title='Highest Rating' value={highestRating} key={3}/>
-          <PerformanceCard title='Lowest Rating' value={lowestRating} key={4}/>
+      <section>
+        <h1 className="text-gray-600 text-xl font-semibold">Internal Customer Survey Ranking for Quarter {q}, {y}</h1>
       </section>
       <section className='mt-3 rounded-lg px-4 py-2 w-full'>
           <Tabs defaultValue="list" className="w-full">
@@ -67,11 +54,11 @@ const RankingsPageAdmin = async({searchParams}: Props) => {
                 <FaChartBar fontSize={24}/>
               </TabsTrigger>
             </TabsList>
-            {departmentRankingIds &&  <DepartmentRankingPublishButton departmentRankingIds={departmentRankingIds} />}
+            {departmentRankingIds &&  <DepartmentRankingPublishButton quarter={q} year={y} departmentRankingIds={departmentRankingIds} />}
            
             </section>
             <TabsContent value="list">
-              {departmentAverages.length<1 ? <p className="">No data found</p>: <DepartmentsPerformanceTable isAdmin={true} departmentAverages={departmentAverages} quarter={q} year={y} ratingsForTheYear={ratingsForTheYear} ratingsForTheQuarterAndYear={ratingsForTheQuarterAndYear}/>}
+              {departmentAverages.length<1 ? <p className="">No data found</p>: <DepartmentsPerformanceTable isAdmin={true} departmentAverages={departmentAverages} quarter={q} year={y} />}
             </TabsContent>
             <TabsContent value="chart">
               {departmentAverages.length<1 ? <p className="">No data found</p>: <DepartmentPerformanceChart departmentAverages={departmentAverages}/>}

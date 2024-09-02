@@ -21,6 +21,7 @@ model User {
   departmentId Int 
   department  Department@relation(fields: [departmentId], references: [id])  // Added relation details
   ratings       Rating[]     // One-to-many relation: a user can have multiple ratings
+  auditLogs       AuditLog[] // One-to-many relation: a user can have multiple audit logs
   isAdmin      Boolean   @default(false) // Added isAdmin field with default value false
 }
 
@@ -31,6 +32,7 @@ model Department {
   ratings     Rating[]
   users       User[]    // One-to-many relation
   departmentRanking  DepartmentRanking[]  // One-to-many relation
+  reports            DepartmentReport[]          // One-to-many relation
   // Additional fields specific to departments (optional)
 }
 
@@ -42,6 +44,8 @@ model Rating {
   improvements  String
   stars         Int
   isPublished   Boolean   @default(false)
+  isHidden      Boolean   @default(false) //
+  excludeFromAverage Boolean @default(false) // New field to exclude from average calculation
   createdAt     DateTime   @default(now())
   quarter       Int        // Store the quarter information
   year          Int        // Store the year information
@@ -49,6 +53,19 @@ model Rating {
   department    Department @relation(fields: [departmentId], references: [id])
   ratedByUser        User       @relation(fields: [ratedByUserId], references: [id]) // Added relation details
 }
+
+model AuditLog {
+  id          Int       @id @default(autoincrement())
+  userId      Int       // The ID of the user who performed the action
+  name        String    // The name of the user
+  email       String    // The email of the user
+  action      String    // A brief description of the action performed
+  description String    // Detailed description of the action
+  timestamp   DateTime  @default(now()) // The time when the action was performed
+
+  user        User      @relation(fields: [userId], references: [id]) // Relation to User model
+}
+
 
 model DepartmentRanking {
   id            Int        @id @default(autoincrement())
@@ -58,4 +75,35 @@ model DepartmentRanking {
   year          Int
   quarter       Int
   department    Department @relation(fields: [departmentId], references: [id])
+}
+
+model CorporateReport {
+  id                          Int        @id @default(autoincrement())
+  year                        Int
+  quarter                     Int
+  keyObservations             String
+  keyRecommendations          String
+  satisfactionImageUrl        String?    // Optional URL for satisfaction image
+  likesWordcloudImageUrl      String?    // Optional URL for likes wordcloud image
+  dislikesWordcloudImageUrl   String?    // Optional URL for dislikes wordcloud image
+  improvementsWordcloudImageUrl String?  // Optional URL for improvements wordcloud image
+  numberOfDepartments         Int?       // Optional number of departments
+  numberOfRespondents         Int?       // Optional number of respondents
+  likertTargetScore           Float?     // Optional Likert target score
+  createdAt                   DateTime   @default(now())
+  updatedAt                   DateTime   @updatedAt
+}
+
+
+model DepartmentReport {
+  id                          Int        @id @default(autoincrement())
+  departmentId                Int?
+  year                        Int
+  quarter                     Int
+  satisfactionImageUrl        String     // Optional URL for satisfaction image
+  performanceTrendImageUrl    String     // Optional URL for satisfaction image
+  likertTargetScore           Float?     // Optional Likert target score
+  createdAt                   DateTime   @default(now())
+  updatedAt                   DateTime   @updatedAt
+  department                  Department? @relation(fields: [departmentId], references: [id])
 }

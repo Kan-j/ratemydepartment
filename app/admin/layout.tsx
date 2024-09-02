@@ -4,7 +4,6 @@ import "../globals.css";
 import Providers from "@/components/auth/Providers";
 import TopBar from "@/components/shared/TopBar";
 import LeftSideBar from '@/components/shared/LeftSideBar';
-import Image from "next/image";
 import { ToastContainer } from "react-toastify";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";

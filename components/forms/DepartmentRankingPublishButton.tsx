@@ -1,58 +1,37 @@
-"use client"
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { Button } from '@/components/ui/button';
-import { getPublishedState, togglePublishedStatus } from '@/lib/actions';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuTrigger } from '../ui/dropdown-menu';
 import { IoMenu } from 'react-icons/io5';
+import RankingsPublishButton from './RankingsPublishButton';
+import { getDepartmentRankingDataForAdmin, getDownloadableRatingsDataForQuarterAndYear, getDownloadableRatingsDataForYear } from '@/lib/actions';
+import DownloadOption from './DownloadOption';
 
 
-const DepartmentRankingPublishButton = ({departmentRankingIds}:{departmentRankingIds: any}) => {
-    
-    const [publishedButtonState, setpublishedButtonState] = useState<'Publish' | 'Unpublish'>('Publish')
+const DepartmentRankingPublishButton = async({departmentRankingIds, quarter, year}:{departmentRankingIds: any, quarter:number, year:number}) => {
+  const rankingsDataForAdmin = await getDepartmentRankingDataForAdmin(quarter, year)
+  const downloadableRatingsDataForQuarterAndYear = await getDownloadableRatingsDataForQuarterAndYear(quarter, year)
+  const downloadableRatingsDataForYear = await getDownloadableRatingsDataForYear(year)
 
-  
-    // Fetch the initial published state when the component mounts
-  useEffect(() => {
-    const fetchPublishedState = async () => {
-      try {
-        const { rankings } = await getPublishedState({ departmentRankingIds });
-        const allPublished = rankings.every(ranking => ranking.isPublished);
-        setpublishedButtonState(allPublished ? 'Unpublish' : 'Publish');
-      } catch (error) {
-        console.error('Error fetching initial published state:', error);
-      }
-    };
-
-    fetchPublishedState();
-  }, [departmentRankingIds]);
-
-
-    const handleClick = async()=> {
-        const {updatedRankings} = await togglePublishedStatus({departmentRankingIds})
-        const allPublished = updatedRankings.every(ranking => ranking.isPublished);
-        setpublishedButtonState(allPublished ? 'Unpublish' : 'Publish');
-    }
-    
   return (
     <>
       <section className="flex items-center gap-2">
-        <Button variant={publishedButtonState === 'Unpublish' ?  'outline': 'default'} className="w-fit content-center" onClick={handleClick}>{publishedButtonState}</Button>
+        <RankingsPublishButton departmentRankingIds={departmentRankingIds}/>
         <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="outline">
                   <IoMenu fontSize={30}/>
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-56">
+                <DropdownMenuContent className="">
                   <DropdownMenuGroup>
                     <DropdownMenuItem>
-                      <span>Download Quarter's Rating</span>
+                      <DownloadOption data={rankingsDataForAdmin} title={'Download Ranking List'} fileName={`Rankings_Q${quarter}_${year}`}/>
                     </DropdownMenuItem>
                     <DropdownMenuItem>
-                      <span>Download Year's Rating</span>
+                      <DownloadOption data={downloadableRatingsDataForQuarterAndYear} title={'Download Ratings For Quarter'} fileName={`SurveyResults_Q${quarter}_${year}`}/>
                     </DropdownMenuItem>
                     <DropdownMenuItem>
-                      <span>Download List</span>
+                      <DownloadOption data={downloadableRatingsDataForYear} title={'Download Ratings For Year'} fileName={`SurveyResults_${year}`}/>
                     </DropdownMenuItem>
                   </DropdownMenuGroup>
                 </DropdownMenuContent>

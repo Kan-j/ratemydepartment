@@ -36,6 +36,7 @@ const NavBar = ({departmentId, isAdmin}:{departmentId: number, isAdmin: Boolean}
             </li>
             </ul>
         </div>
+        
         <div className=" gap-8 navbar-end">
             <QuarterSelector screen='big'/>
             <p className="mr-4">
@@ -59,7 +60,6 @@ const NavBar = ({departmentId, isAdmin}:{departmentId: number, isAdmin: Boolean}
                 </DropdownMenuContent>
                 </DropdownMenu>
             </p>
-        
         </div>
         </div>
     </>

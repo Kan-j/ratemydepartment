@@ -1,15 +1,11 @@
-"use client"
-
 import React from 'react'
 import CommentsCardItem from './CommentCardItem'
 import { Rating } from 'react-simple-star-rating'
-import { Button } from '../ui/button'
-import { FaPen } from 'react-icons/fa'
-import EditComment from '../forms/EditComment'
-import { FaEye } from 'react-icons/fa6'
+import CommentActions from '../forms/CommentActions'
+import CommentCardHeader from '../forms/CommentCardHeader';
 
 interface RatingDetails {
-  showEdit: boolean,
+  isAdmin: boolean,
   key:number,
   rating: {
   id: number;
@@ -32,17 +28,13 @@ interface RatingDetails {
   }};
 }
 
-const CommentCard = ({rating, key,showEdit}: RatingDetails) => {
-
+const CommentCard = ({rating, key,isAdmin}: RatingDetails) => {
+ 
   return (
     <section key={key} className="bg-blue-50 px-4 py-4 rounded-lg md:max-w-[700px] lg:max-w-[980px] xl:max-w-[1000px] 2xl:max-w-[1000px]">
     <div className="flex justify-between md:w-4/5 mb-4 sm:mb-2">
-        <div className="flex flex-col sm:flex-row items-baseline sm:gap-4">
-          <h1 className="font-bold text-gray-900">{rating?.ratedByUser?.department?.name}</h1>
-          <h1 className="text-4xl text-gray-800 hidden sm:flex">.</h1>
-          <Rating size={18} initialValue={rating.stars} allowHover={false} readonly={true} allowFraction={true}/>
-        </div>
-        {showEdit && <FaEye size={23}/>}
+       <CommentCardHeader rating={rating}/>
+        {isAdmin && <CommentActions id={rating.id}/>}
     </div>
    <CommentsCardItem title="Likes" description={rating.likes}/>
    <CommentsCardItem title="Dislikes" description={rating.dislikes}/>

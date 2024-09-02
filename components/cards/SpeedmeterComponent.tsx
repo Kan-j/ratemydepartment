@@ -2,12 +2,12 @@
 import React from 'react'
 import ReactSpeedometer from 'react-d3-speedometer/slim';
 
-const SpeedmeterComponent = () => {
+const SpeedmeterComponent = ({value}:{value: number}) => {
   return (
     <ReactSpeedometer
     minValue={0}
     maxValue={5}
-    value={4.7}
+    value={value}
     needleColor="red"
     startColor="red"
     segments={10}

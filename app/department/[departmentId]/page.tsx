@@ -2,7 +2,7 @@ import CommentCard from '@/components/cards/CommentCard';
 import RatingDistribution from '@/components/cards/RatingDistribution';
 import DepartmentDetail from '@/components/shared/DepartmentDetailForm';
 import QuarterSelector from '@/components/shared/QuarterSelector';
-import {getDepartmentDetails, getDepartmentDetailsForAdmin} from '@/lib/actions';
+import {getDepartmentDetails} from '@/lib/actions';
 import { getServerSession } from 'next-auth';
 import React from 'react'
 
@@ -35,7 +35,7 @@ const DepartmentDetailPage = async({params, searchParams}: Props) => {
   const {departmentId: mydepartmentId} = userDetails.user
   
   if(id === mydepartmentId) {
-    const result = await getDepartmentDetailsForAdmin(id, q, y) as DepartmentDetails;
+    const result = await getDepartmentDetails(id, q, y) as DepartmentDetails;
     const { department, totalRatings, starsCount, averageStars } = result;
     const publishedRatings = department.ratings.filter((rating: any) => rating.isPublished);
     const publishedRatingsLength = publishedRatings.length;

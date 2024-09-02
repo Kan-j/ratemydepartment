@@ -1,36 +1,58 @@
-import React from 'react'
+"use client";
+import React from 'react';
 import {
-    Pagination,
-    PaginationContent,
-    PaginationEllipsis,
-    PaginationItem,
-    PaginationLink,
-    PaginationNext,
-    PaginationPrevious,
-  } from "@/components/ui/pagination"
-  
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 
-const ReportsPagination = () => {
-  return (
-    <section className="">
-        <Pagination>
-            <PaginationContent>
-                <PaginationItem>
-                <PaginationPrevious href="#" />
-                </PaginationItem>
-                <PaginationItem>
-                <PaginationLink href="#">1</PaginationLink>
-                </PaginationItem>
-                <PaginationItem>
-                <PaginationEllipsis />
-                </PaginationItem>
-                <PaginationItem>
-                <PaginationNext href="#" />
-                </PaginationItem>
-            </PaginationContent>
-        </Pagination>
-    </section>
-  )
+interface ReportPaginationProps {
+  NextPageExists: boolean;
+  PrevPageExists: boolean;
+  totalPages: number;
+  currentPage: number;
 }
 
-export default ReportsPagination
+const ReportPagination: React.FC<ReportPaginationProps> = ({ NextPageExists, PrevPageExists, totalPages, currentPage }) => {
+  const pagesArray = Array.from({ length: totalPages }, (_, i) => i + 1);
+  const getPageHref = (page: number) => `?page=${page}`;
+
+  return (
+    <section className="mt-6 mx-auto w-10/12 mb-8 text-gray-800">
+      <Pagination>
+        <PaginationContent>
+          <PaginationItem>
+            <PaginationPrevious
+              href={PrevPageExists ? getPageHref(currentPage - 1) : '#'}
+              isActive={PrevPageExists}
+            />
+          </PaginationItem>
+          {pagesArray.map((pageIndex) => (
+            <PaginationItem key={pageIndex}>
+              <PaginationLink href={getPageHref(pageIndex)} isActive={pageIndex === currentPage}>
+                {pageIndex}
+              </PaginationLink>
+            </PaginationItem>
+          ))}
+          {currentPage < totalPages - 1 && totalPages > 5 && (
+            <PaginationItem>
+              <PaginationEllipsis />
+            </PaginationItem>
+          )}
+          <PaginationItem>
+            <PaginationNext
+              href={NextPageExists ? getPageHref(currentPage + 1) : '#'}
+              isActive={NextPageExists}
+            />
+          </PaginationItem>
+        </PaginationContent>
+      </Pagination>
+    </section>
+  );
+};
+
+export default ReportPagination;

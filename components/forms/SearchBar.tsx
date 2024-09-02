@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 
 const SearchBar = ({isAdmin=false}:{isAdmin?: boolean}) => {
-    const router = useRouter()
+
     const [departments, setDepartments] = useState<any>(null);
   
     const handleSearch = async(term: string)=> {
@@ -20,9 +20,7 @@ const SearchBar = ({isAdmin=false}:{isAdmin?: boolean}) => {
       if(!term) setDepartments(null)
     }
   
-    const handleClick = (departmentId:any)=> {
-        router.push(`/admin/departments/${departmentId}`)
-    }
+
   
   return (
     <div className="w-full mt-4 flex flex-col relative">
@@ -46,10 +44,9 @@ const SearchBar = ({isAdmin=false}:{isAdmin?: boolean}) => {
           className="bg-white font-medium text-gray-800 rounded-md px-6 py-2 border-b-2 border-b-gray-100 hover:bg-gray-100"
           style={{ animationDelay: `${index * 100}ms` }}
         >
-          if(isAdmin){
-              <Link href={`/admin/departments/${department.id}`}>{department.name}</Link> 
-          }
-            <Link href={`/departments/${department.id}`}>{department.name}</Link> 
+          {isAdmin ? 
+              <Link href={`/admin/departments/${department.id}`}>{department.name}</Link>:
+              <Link href={`/dashboard/departments/${department.id}`}>{department.name}</Link>}
         </div>
       )})}
     </div>

@@ -1,17 +1,15 @@
 "use client"
-
 import Link from 'next/link';
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { FaDownload } from 'react-icons/fa';
-import {useCSVDownloader} from 'react-papaparse';
+
+
 interface departmentAveragesProps {
   departmentAverages: {
     id: number,
@@ -21,19 +19,10 @@ interface departmentAveragesProps {
   year:number,
   quarter: number,
   isAdmin: boolean,
-  ratingsForTheYear?: any,
-  ratingsForTheQuarterAndYear?: any
 }
 
-const DepartmentsPerformanceTable = ({departmentAverages, quarter, year,isAdmin, ratingsForTheYear, ratingsForTheQuarterAndYear}: departmentAveragesProps) => {
-  const {CSVDownloader, Type} = useCSVDownloader()
-  const rankedDepartments = departmentAverages.map((department, index) => {
-    return {
-        ranking: index + 1,
-        name: department.name,
-        averageRating: department.averageRating
-    };
-  });
+const DepartmentsPerformanceTable = ({departmentAverages,isAdmin}: departmentAveragesProps) => {
+
   return (
     <section className='w-full'>
     <Table className='w-full'>
@@ -50,7 +39,7 @@ const DepartmentsPerformanceTable = ({departmentAverages, quarter, year,isAdmin,
             <TableRow key={index}>
               <TableCell className="font-medium">#{index+1}</TableCell>
               <TableCell>{isAdmin? <Link href={`/admin/departments/${department.id}`}>{department.name}</Link>: department.name} </TableCell>
-              <TableCell className="">{department.averageRating}</TableCell>
+              <TableCell className="">{department.averageRating.toFixed(2)}</TableCell>
             </TableRow>
           )
         })}

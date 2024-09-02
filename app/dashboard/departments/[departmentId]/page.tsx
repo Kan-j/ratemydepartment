@@ -1,13 +1,10 @@
-
 import React from "react";
-import { getDepartmentDetailsForAdmin } from '@/lib/actions';
-import QuarterSelector from "../../../../components/shared/QuarterSelector";
+import { getDepartmentDetailsForQuarterAndYear } from '@/lib/actions';
+import QuarterSelector from "@/components/shared/QuarterSelector";
 import RatingDistribution from '@/components/cards/RatingDistribution';
-import PublishButton from '@/components/forms/PublishButton';
-import DownloadButton from '@/components/forms/DownloadButton';
-import CommentCard from '@/components/cards/CommentCard';
 import SearchBar from "@/components/forms/SearchBar";
-import CommentHeader from "@/components/headers/CommentHeader";
+import CommentsSection from "@/components/shared/CommentsSection";
+import { getServerSession } from "next-auth";
 
 interface Params {
   params:{
@@ -17,11 +14,21 @@ interface Params {
   
 }
 
+
 interface DepartmentDetails {
   department: any; // Define the type of department object
   totalRatings: number;
   starsCount: any;
   averageStars: number;
+}
+
+export async function getUserDepartment(){
+  const session = await getServerSession()
+  const email = session?.user?.email
+  const response = await fetch(`http://127.0.0.1:3000/api/department?email=${email}`)
+  const  userDetails= await response.json()
+  const {departmentId: mydepartmentId} = userDetails.user
+  return mydepartmentId;
 }
 
 const UserDepartmentDetails = async({params, searchParams}:Params) => {
@@ -30,28 +37,19 @@ const UserDepartmentDetails = async({params, searchParams}:Params) => {
   const currentQuarter = Math.ceil((today.getMonth() + 1) / 3); 
   const q = parseInt(searchParams['q'] || '')|| currentQuarter
   const y = parseInt(searchParams['y'] || '')|| currentYear
+  const page = parseInt(searchParams['page'] || '1')
+  const sort = searchParams['sort'] || 'desc'
 
   const departmentIdInt = parseInt(params.departmentId)
-  const result = await getDepartmentDetailsForAdmin(departmentIdInt, q, y) as DepartmentDetails;
+  const result = await getDepartmentDetailsForQuarterAndYear(departmentIdInt, q, y) as DepartmentDetails;
+
+  const mydepartmentId = await getUserDepartment()
+  const isMyDepartment = mydepartmentId === departmentIdInt;
 
   // Now TypeScript knows the structure of the returned object
   const { department, totalRatings, starsCount, averageStars } = result;
-
-  const publishedRatings = department.ratings.filter((rating: any) => rating.isPublished);
-  const publishedRatingsLength = publishedRatings.length;
-  const ratingCsvJSON = department.ratings?.map((rating:any) => ({
-    stars: rating.stars | 0,
-    likes: rating.likes || '',
-    dislikes: rating.dislikes || '' ,
-    improvements: rating.improvements || '',
-    departmentName: department.name || '',
-    quarter: rating.quarter || 0,
-    year: rating.year || 0,
-    ratedBy: rating.ratedByUser.department.name || ''
-  }));
-
-
   
+    
 
   return (
     <div className='flex flex-col'>
@@ -80,21 +78,7 @@ const UserDepartmentDetails = async({params, searchParams}:Params) => {
           <RatingDistribution starsCount={starsCount}/>
       </section>
 
-      <article className="flex flex-col">
-        <CommentHeader ratingsLength={department.ratings.length} isMyDepartment={true}/>
-
-        <article className="flex flex-col gap-4">
-              {department.ratings.map((rating:any, index:any)=> {
-                    if(rating.isPublished){
-                      return (
-                      <CommentCard key={index} rating={rating} showEdit={false}/>
-                    )
-                  }
-              })}
-              {publishedRatingsLength == 0 && <h1 className="text-gray-700">Comments not yet published</h1>}
-            </article>
-      </article>
-      
+      <CommentsSection departmentId={departmentIdInt} currentPage={page} quarter={q} year={y} sort={sort} isMyDepartment={isMyDepartment} isAdmin={false}/>
     </div>
   )
 }

@@ -5,12 +5,15 @@ import {
     TabsList,
     TabsTrigger,
   } from "@/components/ui/tabs"
-import { Button } from '@/components/ui/button'
-import { FaDownload } from 'react-icons/fa'
-import SingleReportListItem from '@/components/cards/SingleReportListItem'
-import ReportsPagination from '@/components/cards/ReportsPagination'
+import MyDepartmentReports from '@/components/shared/MyDepartmentReports'
 
-const Reports = () => {
+interface Params {
+  searchParams: { [key: string]: string | undefined },
+  
+}
+const Reports = async({searchParams}:Params) => {
+  const page = parseInt(searchParams['page'] || '1')
+ 
   return (
     <section className='flex flex-col'>
         <section className="">
@@ -21,32 +24,21 @@ const Reports = () => {
                 <TabsTrigger className='bg-white flex justify-start  data-[state=active]:text-blue-400 data-[state=active]:bg-white data-[state=active]:border-b data-[state=active]:border-b-blue-400' value="corporate">Corporate Reports</TabsTrigger>
             </TabsList>
             <TabsContent value="department">
-               <section className=" w-full flex flex-col gap-3 p-3 rounded-lg">
-                    <SingleReportListItem/>
-                    <SingleReportListItem/>
-                    <SingleReportListItem/>
-                    <SingleReportListItem/>
-                    <SingleReportListItem/>
-                    <SingleReportListItem/>
-               </section>
-               <section className="w-full ">
-                    <section className="w-3/4 justify-center items-center mt-2 mb-6">
-                        <ReportsPagination/>
-                    </section>
-               </section>
-              
+               <MyDepartmentReports page={page}/>
             </TabsContent>
             <TabsContent value="corporate">
                 <section className=" w-full flex flex-col gap-3 p-3 rounded-lg">
-                    <SingleReportListItem/>
-                    <SingleReportListItem/>
+                    {/* <SingleReportListItem/>
+                    <SingleReportListItem/> */}
+                    
                     
                </section>
                <section className="w-full ">
                     <section className="w-3/4 justify-center items-center mt-2 mb-6">
-                        <ReportsPagination/>
+                        {/* <ReportsPagination/> */}
                     </section>
                </section>
+
             </TabsContent>
             </Tabs>
         </section>

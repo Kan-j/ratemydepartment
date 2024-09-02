@@ -1,12 +1,8 @@
 import QuarterSelector from "@/components/shared/QuarterSelector"
-import SmallScreenInput from "@/components/shared/SmallScreenInput"
 import RatingDistribution from "@/components/cards/RatingDistribution";
-import CommentCard from "@/components/cards/CommentCard";
-import { getDepartmentDetailsForAdmin } from "@/lib/actions";
-import PublishButton from "@/components/forms/PublishButton";
+import { getDepartmentDetailsForQuarterAndYear } from "@/lib/actions";
 import SearchBarAdmin from "@/components/forms/SearchBar";
-import DownloadButton from "@/components/forms/DownloadButton";
-import CommentHeaderAdmin from "@/components/headers/CommentHeaderAdmin";
+import CommentsSection from "@/components/shared/CommentsSection";
 
 interface Params {
   params:{
@@ -28,25 +24,14 @@ const AdminDepartmentDetails = async({params, searchParams}:Params) => {
   const currentQuarter = Math.ceil((today.getMonth() + 1) / 3); 
   const q = parseInt(searchParams['q'] || '')|| currentQuarter
   const y = parseInt(searchParams['y'] || '')|| currentYear
+  const page = parseInt(searchParams['page'] || '1')
+  const sort = searchParams['sort'] || 'desc'
 
   const departmentIdInt = parseInt(params.departmentId)
-  const result = await getDepartmentDetailsForAdmin(departmentIdInt, q, y) as DepartmentDetails;
+  const result = await getDepartmentDetailsForQuarterAndYear(departmentIdInt, q, y) as DepartmentDetails;
 
   // Now TypeScript knows the structure of the returned object
   const { department, totalRatings, starsCount, averageStars } = result;
-
-  const ratingCsvJSON = department.ratings?.map((rating:any) => ({
-    stars: rating.stars | 0,
-    likes: rating.likes || '',
-    dislikes: rating.dislikes || '' ,
-    improvements: rating.improvements || '',
-    departmentName: department.name || '',
-    quarter: rating.quarter || 0,
-    year: rating.year || 0,
-    ratedBy: rating.ratedByUser.department.name || ''
-  }));
-
-  
 
   return (
     <div className='flex flex-col'>
@@ -69,27 +54,10 @@ const AdminDepartmentDetails = async({params, searchParams}:Params) => {
           </section>
           <RatingDistribution starsCount={starsCount}/>
       </section>
+      
+      <CommentsSection departmentId={departmentIdInt} currentPage={page} quarter={q} year={y} sort={sort} isMyDepartment={false} isAdmin={true}/>
 
-      <article className="flex flex-col">
-       <CommentHeaderAdmin ratingsLength={24}/>
-        {/* <section className="grid grid-cols-2 mt-12 mb-6">
-          <h1 className="text-xl md:text-2xl text-gray-700 font-semibold">Comments ({department.ratings.length})</h1>
-          <section className="flex gap-3">
-            <PublishButton ratings={department.ratings}/>
-            <DownloadButton ratingCsvJSON={ratingCsvJSON}/>
-          </section>
-          
-        </section> */}
 
-        <article className="flex flex-col gap-4">
-          {department.ratings.map((rating:any, index:any)=> {
-            return (
-              <CommentCard key={index} rating={rating} showEdit={true}/>
-            )
-          })}
-          
-        </article>
-      </article>
       
     </div>
   )

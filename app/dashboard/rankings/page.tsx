@@ -1,19 +1,17 @@
-import PerformanceCard from '@/components/cards/PerformanceCard'
 import DepartmentPerformanceChart from '@/components/shared/DepartmentPerformanceChart'
 import QuarterSelector from '@/components/shared/QuarterSelector'
-import SmallScreenInput from '@/components/shared/SmallScreenInput'
 import React from 'react'
 
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { getDepartmentRankingData } from '@/lib/actions'
-import Image from 'next/image'
 import { FaChartBar, FaDownload, FaHamburger } from 'react-icons/fa'
 import { GiHamburgerMenu } from 'react-icons/gi';
 
 import { getServerSession } from 'next-auth'
 import { Button } from '@/components/ui/button'
 import DepartmentsPerformanceTable from '@/components/shared/DepartmentsPerformanceTable'
+import RankingsDownloadButton from '@/components/forms/RankingsDownloadButton'
 
 
 
@@ -39,15 +37,9 @@ const RankingsPage = async({searchParams}: Props) => {
 
 
 
-    const {
-      corporateScore,
-      highestAverageRating,
-      lowestAverageRating,
-      departmentAverageRating,
-      departmentRankings
-    } = await getDepartmentRankingData(q, y, departmentId)  
+    const departmentRankings = await getDepartmentRankingData(q, y)  
     
-  
+
 
   return (
     <div className='flex flex-col'>
@@ -57,12 +49,8 @@ const RankingsPage = async({searchParams}: Props) => {
         </section>
       </section>
       
-      {/* Dashboard metrics */}
-      <section className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4'>
-          <PerformanceCard title='Overall Corporate Score' value={corporateScore} key={1}/>
-          <PerformanceCard title="Your Department's Score" value={departmentAverageRating} key={5}/>
-          <PerformanceCard title='Highest Rating' value={highestAverageRating} key={3}/>
-          <PerformanceCard title='Lowest Rating' value={lowestAverageRating} key={4}/>
+      <section>
+        <h1 className="text-gray-600 text-xl font-semibold">Internal Customer Survey Ranking for Quarter {q}, {y}</h1>
       </section>
       <section className='mt-3 rounded-lg px-4 py-2 w-full'>
           <Tabs defaultValue="list" className="w-full">
@@ -77,10 +65,7 @@ const RankingsPage = async({searchParams}: Props) => {
 
             <TabsContent value="list" >
               <section className="w-3/4 flex justify-end mb-3">
-                <Button className="flex gap-2">
-                  <FaDownload/>
-                  <span className="">Download</span>
-                </Button>
+                <RankingsDownloadButton rankingData={JSON.parse(JSON.stringify(departmentRankings))} quarter={q} year={y}/>
               </section>
               {departmentRankings.length<1 ? <p className="">No data found</p>: <DepartmentsPerformanceTable isAdmin={false} departmentAverages={departmentRankings} quarter={q} year={y}/>}
             </TabsContent>
