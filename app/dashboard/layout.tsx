@@ -11,6 +11,8 @@ import React from "react";
 import LeftSideBar from '../../components/shared/LeftSideBar';
 import TopBar from '../../components/shared/TopBar';
 import Providers from '../../components/auth/Providers';
+import { getUserDepartment } from "@/lib/actions";
+
 
 
 const inter = Inter({ subsets: ["latin"] });
@@ -21,17 +23,15 @@ export const metadata: Metadata = {
   description: "The Admin Page for the Rate Your Department App",
 };
 
+
+
+
 export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const session = await getServerSession()
-  const email = session?.user?.email
-  
-  const response = await fetch(`http://127.0.0.1:3000/api/department?email=${email}`)
-  const  userDetails= await response.json()
-  const {departmentId} = userDetails.user
+  const departmentId = await getUserDepartment();
 
 
 

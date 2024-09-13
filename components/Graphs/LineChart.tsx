@@ -16,7 +16,7 @@ ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, T
 
 const quarters = ['Q1', 'Q2', 'Q3', 'Q4'];
 
-const LineChart = ({ data }:any) => {
+const LineChart = ({ data,isCorporate }:{data: any, isCorporate? :any}) => {
   const [startQuarter, setStartQuarter] = useState('Q1');
   const [startYear, setStartYear] = useState(data[0].year);
   const [endQuarter, setEndQuarter] = useState('Q4');
@@ -32,7 +32,7 @@ const LineChart = ({ data }:any) => {
     labels: filteredData.map((d:any) => `${d.quarter} ${d.year}`),
     datasets: [
       {
-        label: 'Department Score Trends',
+        label: `${isCorporate ?'Corporate Score Trends' : 'Department Score Trends'}`,
         data: filteredData.map((d:any) => d.value),
         borderColor: 'rgba(75,192,192,1)',
         backgroundColor: 'rgba(75,192,192,0.2)',

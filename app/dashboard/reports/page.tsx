@@ -6,6 +6,9 @@ import {
     TabsTrigger,
   } from "@/components/ui/tabs"
 import MyDepartmentReports from '@/components/shared/MyDepartmentReports'
+import CorporateReportListClient from '@/components/shared/CorporateReportListClient'
+
+export const dynamic = 'force-dynamic';  // Ensures this page will be rendered on the server
 
 interface Params {
   searchParams: { [key: string]: string | undefined },
@@ -13,6 +16,7 @@ interface Params {
 }
 const Reports = async({searchParams}:Params) => {
   const page = parseInt(searchParams['page'] || '1')
+  const corporateReportPage = parseInt(searchParams['corporate_reports_list'] || '1')
  
   return (
     <section className='flex flex-col'>
@@ -28,15 +32,7 @@ const Reports = async({searchParams}:Params) => {
             </TabsContent>
             <TabsContent value="corporate">
                 <section className=" w-full flex flex-col gap-3 p-3 rounded-lg">
-                    {/* <SingleReportListItem/>
-                    <SingleReportListItem/> */}
-                    
-                    
-               </section>
-               <section className="w-full ">
-                    <section className="w-3/4 justify-center items-center mt-2 mb-6">
-                        {/* <ReportsPagination/> */}
-                    </section>
+                    <CorporateReportListClient page={corporateReportPage}/>
                </section>
 
             </TabsContent>

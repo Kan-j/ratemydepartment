@@ -1,10 +1,12 @@
 import React from "react";
-import { getDepartmentDetailsForQuarterAndYear } from '@/lib/actions';
+import { getDepartmentDetailsForQuarterAndYear, getUserDepartment } from '@/lib/actions';
 import QuarterSelector from "@/components/shared/QuarterSelector";
 import RatingDistribution from '@/components/cards/RatingDistribution';
 import SearchBar from "@/components/forms/SearchBar";
 import CommentsSection from "@/components/shared/CommentsSection";
 import { getServerSession } from "next-auth";
+
+
 
 interface Params {
   params:{
@@ -22,14 +24,7 @@ interface DepartmentDetails {
   averageStars: number;
 }
 
-export async function getUserDepartment(){
-  const session = await getServerSession()
-  const email = session?.user?.email
-  const response = await fetch(`http://127.0.0.1:3000/api/department?email=${email}`)
-  const  userDetails= await response.json()
-  const {departmentId: mydepartmentId} = userDetails.user
-  return mydepartmentId;
-}
+
 
 const UserDepartmentDetails = async({params, searchParams}:Params) => {
   const today = new Date();
@@ -42,7 +37,7 @@ const UserDepartmentDetails = async({params, searchParams}:Params) => {
 
   const departmentIdInt = parseInt(params.departmentId)
   const result = await getDepartmentDetailsForQuarterAndYear(departmentIdInt, q, y) as DepartmentDetails;
-
+  // SESSION ADDED
   const mydepartmentId = await getUserDepartment()
   const isMyDepartment = mydepartmentId === departmentIdInt;
 

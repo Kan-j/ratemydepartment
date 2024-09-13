@@ -9,11 +9,10 @@ import { FaChartBar, FaDownload, FaHamburger } from 'react-icons/fa'
 import { GiHamburgerMenu } from 'react-icons/gi';
 
 import { getServerSession } from 'next-auth'
-import { Button } from '@/components/ui/button'
 import DepartmentsPerformanceTable from '@/components/shared/DepartmentsPerformanceTable'
 import RankingsDownloadButton from '@/components/forms/RankingsDownloadButton'
 
-
+export const dynamic = 'force-dynamic';  // Ensures this page will be rendered on the server
 
 interface Props {
   searchParams: { [key: string]: string | undefined }
@@ -26,8 +25,6 @@ const RankingsPage = async({searchParams}: Props) => {
   
   const response = await fetch(`http://127.0.0.1:3000/api/department?email=${email}`)
   const  userDetails= await response.json()
-  
-  const {departmentId} = userDetails.user
 
   const today = new Date();
   const currentYear = today.getFullYear();
@@ -35,9 +32,8 @@ const RankingsPage = async({searchParams}: Props) => {
   const q = parseInt(searchParams['q'] || '')|| currentQuarter
   const y = parseInt(searchParams['y'] || '')|| currentYear
 
-
-
-    const departmentRankings = await getDepartmentRankingData(q, y)  
+  const departmentRankings = await getDepartmentRankingData(q, y)  
+   // SESSION ADDED
     
 
 

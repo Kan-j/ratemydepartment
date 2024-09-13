@@ -78,21 +78,15 @@ model DepartmentRanking {
 }
 
 model CorporateReport {
-  id                          Int        @id @default(autoincrement())
-  year                        Int
-  quarter                     Int
-  keyObservations             String
-  keyRecommendations          String
-  satisfactionImageUrl        String?    // Optional URL for satisfaction image
-  likesWordcloudImageUrl      String?    // Optional URL for likes wordcloud image
-  dislikesWordcloudImageUrl   String?    // Optional URL for dislikes wordcloud image
-  improvementsWordcloudImageUrl String?  // Optional URL for improvements wordcloud image
-  numberOfDepartments         Int?       // Optional number of departments
-  numberOfRespondents         Int?       // Optional number of respondents
-  likertTargetScore           Float?     // Optional Likert target score
-  createdAt                   DateTime   @default(now())
-  updatedAt                   DateTime   @updatedAt
+  id          Int      @id @default(autoincrement())
+  quarter     String
+  year        String
+  fileUrl     String   // This stores the path to the uploaded file
+  isPublished Boolean  @default(false) // Whether the report is published or not
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
+
 
 
 model DepartmentReport {

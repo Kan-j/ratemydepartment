@@ -1,62 +1,58 @@
-import axios from 'axios';
-import React from 'react'
+"use client"
+import React, { useState, useEffect } from 'react';
+import SingleCorporateReportListItem from '../Admin/SingleCorporateReportListItem';
+import { getPaginatedCorporateReports, togglePublished } from '@/lib/actions';
+import CorporateReportPagination from './CorporateReportPagination';
 
-const CorporateReportsList = async() => {
-    const responses = [
-    "Provides reliable data management.",
-    "Ensures data security and compliance.",
-    "Has streamlined our reporting processes.",
-    "Is quick to resolve technical issues.",
-    "Supports efficient system integration.",
-    "Provides accurate data analytics.",
-    "Is always up-to-date with the latest technology.",
-    "Maintains system uptime effectively.",
-    "Is responsive to user needs.",
-    "Delivers insightful business intelligence.",
-    "Provides excellent hardware support.",
-    "Is an expert in troubleshooting complex issues.",
-    "Ensures network stability.",
-    "Offers quick and effective solutions.",
-    "Is proactive in system maintenance.",
-    "Excels at managing IT infrastructure.",
-    "Is always available for emergencies.",
-    "Provides great technical training.",
-    "Is innovative in solving problems.",
-    "Ensures seamless software updates.",
-    "Delivers innovative ideas.",
-    "Aligns company goals with actionable plans.",
-    "Has a forward-thinking approach.",
-    "Fosters collaboration across departments.",
-    "Keeps us ahead of competitors.",
-    "Has a clear strategic vision.",
-    "Is always prepared for future challenges.",
-    "Excels in strategic planning.",
-    "Supports long-term growth.",
-    "Drives the company's overall direction."
-      ]
-
-    const response = await axios.post(
-        `http://localhost:3000/api/feedbackAnalyzer`,
-        {
-          responses:responses
-        },
-        {
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        }
-      );
-      
-      console.log(response.data)
+const CorporateReportsList = ({page}:{page:number}) => {
+  const [reports, setReports] = useState<any[]>([]);
+  const [totalPages, setTotalPages] = useState<number>(0);
+  const [NextPageExists, setNextPageExists] = useState<boolean>(false);
+  const [PrevPageExists, setPrevPageExists] = useState<boolean>(false);
+  const [currentPage, setCurrentPage] = useState<number>(page);
 
 
+  useEffect(() => {
+    const fetchReports = async () => {
+      const data = await getPaginatedCorporateReports(currentPage);
+      setReports(data.reports);
+      setTotalPages(data.totalPages);
+      setNextPageExists(data.NextPageExists);
+      setPrevPageExists(data.PrevPageExists);
+    };
+
+    fetchReports();
+  }, [currentPage]);
+
+
+  const handleTogglePublish = async (reportId: number) => {
+    try {
+      await togglePublished(reportId);
+      // Refetch reports after toggling status
+      const data = await getPaginatedCorporateReports(currentPage);
+      setReports(data.reports);
+    } catch (error) {
+      console.error('Error toggling publish status:', error);
+    }
+  };
   return (
-    <section>
-         <section className=" w-full flex flex-col gap-3 p-3 rounded-lg">
-                    <h1>Hi There</h1>
-               </section>
+    <section className="w-full flex flex-col gap-3 p-3 rounded-lg">
+      {reports.length > 0 ? (
+        reports.map(report => (
+          <SingleCorporateReportListItem
+          key={report.id}
+          report={report}
+          onTogglePublish={handleTogglePublish} // Pass handler to child component
+        />
+        ))
+      ) : (
+        <p>No reports available.</p>
+      )}
+      
+      {/* Pagination controls can be added here */}
+      <CorporateReportPagination NextPageExists={NextPageExists} PrevPageExists={PrevPageExists} totalPages={totalPages} currentPage={currentPage}/>
     </section>
-  )
+  );
 }
 
 export default CorporateReportsList

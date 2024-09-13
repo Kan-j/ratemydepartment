@@ -1,5 +1,5 @@
-import { generateAndSavePerformanceTrendChart, generateAndSaveSatisfactionLevelChart, getDepartmentQuarterlyAverages, getDepartmentQuarterlyAveragesUpToQuarter, getDepartmentStarCount, getRatingsForDepartmentalReport } from '@/lib/actions';
-import prisma from '@/lib/prisma';
+import { generateAndSavePerformanceTrendChart, generateAndSaveSatisfactionLevelChart, getDepartmentQuarterlyAverages, getDepartmentQuarterlyAveragesForRouteHandler, getDepartmentQuarterlyAveragesUpToQuarter, getDepartmentStarCount, getRatingsForDepartmentalReport } from '@/lib/actions';
+import {prisma} from '@/lib/prisma';
 import { endOfQuarter, addDays, isAfter, getQuarter, getYear } from 'date-fns';
 
 
@@ -126,7 +126,7 @@ export async function POST(
           ...newReport,
         });
       } else {
-        const departmentAverages = await getDepartmentQuarterlyAverages(departmentId);
+        const departmentAverages = await getDepartmentQuarterlyAveragesForRouteHandler(departmentId);
         const departmentStarCount = await getDepartmentStarCount(departmentId, reportQuarter, reportYear);
         
         const departmentScoreEntry = departmentAverages.find(

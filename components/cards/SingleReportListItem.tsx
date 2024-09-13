@@ -1,3 +1,4 @@
+"use client"
 import React, { FC } from 'react'
 import { Button } from '../ui/button'
 import { FaDownload } from 'react-icons/fa'
@@ -33,7 +34,7 @@ interface SingleReportListItemProps {
 }
 
 
-const SingleReportListItem: FC<SingleReportListItemProps> = async({ reportData }) => {
+const SingleReportListItem: FC<SingleReportListItemProps> = ({ reportData }) => {
 
   return (
     <section className="flex w-3/4 bg-blue-50 py-2 px-4 rounded-md justify-between items-center">

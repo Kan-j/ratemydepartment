@@ -2,7 +2,8 @@ import React from 'react'
 import SingleReportListItem from '../cards/SingleReportListItem'
 import ReportsPagination from '../cards/ReportsPagination'
 import axios from 'axios'
-import { getUserDepartment } from '@/app/dashboard/departments/[departmentId]/page'
+import { getUserDepartment } from '@/lib/actions';
+
 
 
 // Define the type for the star count (since it's an object, we'll assume its structure)

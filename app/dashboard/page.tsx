@@ -1,26 +1,10 @@
 import React from 'react'
 
 import { getServerSession } from 'next-auth'
-import { Button } from '@/components/ui/button'
 import SpeedmeterComponent from '@/components/cards/SpeedmeterComponent'
-import WordCloudComponent from '@/components/cards/WordCloudComponent'
-import Link from 'next/link'
 import LineChart from '@/components/Graphs/LineChart'
-import { generateWordCloudDataForFields, getDepartmentAndCorporateScores, getDepartmentQuarterlyAverages } from '@/lib/actions'
-
-
-const data = [
-  { quarter: 'Q1', year: 2023, value: 4.3 },
-  { quarter: 'Q2', year: 2023, value: 3.5 },
-  { quarter: 'Q3', year: 2023, value: 3.8 },
-  { quarter: 'Q4', year: 2023, value: 4.8 },
-  { quarter: 'Q1', year: 2024, value: 4.5 },
-  { quarter: 'Q2', year: 2024, value: 4.9 },
-  { quarter: 'Q3', year: 2024, value: 4.2 },
-  { quarter: 'Q4', year: 2025, value: 4.1 },
-  { quarter: 'Q1', year: 2025, value: 4.6 },
-  { quarter: 'Q2', year: 2025, value: 4.8 },
-];
+import { getDepartmentAndCorporateScores, getDepartmentQuarterlyAverages } from '@/lib/actions'
+export const dynamic = 'force-dynamic';  // Ensures this page will be rendered on the server
 
 
 interface Props {
@@ -36,22 +20,23 @@ async function getUserDepartment(){
   return mydepartmentId;
 }
 
-
-
 const DashboardHomePage = async({searchParams}: Props) => {
   const today = new Date();
   const currentYear = today.getFullYear();
   const currentQuarter = Math.ceil((today.getMonth() + 1) / 3); 
   const q = parseInt(searchParams['q'] || '')|| currentQuarter
   const y = parseInt(searchParams['y'] || '')|| currentYear
+  
   const mydepartmentId = await getUserDepartment();
 
   const {
     corporateScore,
     departmentScore,
     departmentName} = await getDepartmentAndCorporateScores(y,q, mydepartmentId)
-  const {likesWordCloudData, dislikesWordCloudData, improvementsWordCloudData} = await generateWordCloudDataForFields(mydepartmentId, y, q);
+    // SESSION ADDED
+  // const {likesWordCloudData, dislikesWordCloudData, improvementsWordCloudData} = await generateWordCloudDataForFields(mydepartmentId, y, q);
   const averageScoreTrends = await getDepartmentQuarterlyAverages(mydepartmentId)
+   // SESSION ADDED
 
 
   return (
@@ -60,12 +45,12 @@ const DashboardHomePage = async({searchParams}: Props) => {
       {/* Dashboard metrics */}
       <section className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6'>
           <section className="col-span-2 w-full">
-            <h1 className="font-semibold mb-3 text-gray-700">Welcome Rachel,</h1>
-            <p className="text-gray-700">Here are some recent reports for your department</p>
-            <section className='flex flex-col justify-start items-start mt-2 w-full gap-2'>
-              <Button variant={'outline'} className='text-gray-500 w-4/6'>Q1, 2024 Report</Button>
-              <Button variant={'outline'} className='text-gray-500 w-4/6'>Q1, 2024 Report</Button>
-              <Button variant={'outline'} className='text-gray-500 w-4/6'>Q1, 2024 Report</Button>
+            <h1 className="font-semibold mb-3 text-gray-700">Welcome to RateADepartment ,</h1>
+            <p className="text-gray-700"></p>
+            <section className='flex flex-col text-gray-800 justify-start items-start mt-2 w-full gap-2'>
+              <p>View departmental & Corporate reports at <b>Reports</b> </p>
+              <p>View Quarterly Rankings at <b>Ranking</b> </p>
+              <p>View your department's reviews at <b>My Department</b> </p>
             </section>
             
             {/* <WordCloudComponent/> */}
@@ -81,7 +66,7 @@ const DashboardHomePage = async({searchParams}: Props) => {
       </section>
 
 
-      <section className="w-full mt-4">
+      <section className="w-full mt-4 mb-6">
         <h1 className="font-bold mb-3 text-gray-700">{departmentName}'s Score Trends</h1>
         <section className="w-11/12 h-fit">
           <LineChart data={averageScoreTrends} />
@@ -89,29 +74,7 @@ const DashboardHomePage = async({searchParams}: Props) => {
       </section>
 
 
-      <section className="grid grid-cols-6 mb-4 mt-9">
-          {/* Second Row */}
-          <section className="w-full col-span-3">
-                <h1 className="font-bold mb-3 text-gray-700">Some Likes about your Department</h1>
-                <section className="h-48 w-5/6">
-                  <WordCloudComponent words={likesWordCloudData}/>
-                </section>
-                
-          </section>
-          <section className="col-span-3 w-full">
-                <h1 className="font-bold mb-3 text-gray-700">Some Dislikes about your Department</h1>
-                <section className="h-48 w-5/6">
-                  <WordCloudComponent words={dislikesWordCloudData}/>
-                </section>
-          </section>
-      </section>
-
-      <section className="w-full mt-4 mb-4">
-        <h1 className="font-bold mb-3 text-gray-700">Some Improvement suggestions for your Department</h1>
-        <section className="w-11/12 h-52">
-          <WordCloudComponent  words={improvementsWordCloudData}/>
-        </section>
-      </section>
+     
     </div>
   )
 }

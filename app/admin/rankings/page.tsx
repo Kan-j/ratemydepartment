@@ -6,8 +6,8 @@ import DepartmentRankingPublishButton from '@/components/forms/DepartmentRanking
 
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { getDepartmentStatistics,getDepartmentRankingIds, getRatingsForYear, getRatingsForTheQuarterAndYear } from '@/lib/actions'
-import { FaChartBar, FaHamburger } from 'react-icons/fa'
+import { getDepartmentStatistics,getDepartmentRankingIds } from '@/lib/actions'
+import { FaChartBar } from 'react-icons/fa'
 import { GiHamburgerMenu } from 'react-icons/gi';
 
 interface Props {
@@ -26,9 +26,10 @@ const RankingsPageAdmin = async({searchParams}: Props) => {
   const {
     departmentAverages
   } = await getDepartmentStatistics(q, y)
+  // SESSION ADDED
 
     const departmentRankingIds = await getDepartmentRankingIds(q, y) 
-
+    // SESSION ADDED
 
   return (
     <div className='flex flex-col'>

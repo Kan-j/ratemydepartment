@@ -18,7 +18,7 @@ const quarters = ['Q1', 'Q2', 'Q3', 'Q4'];
 
 const DepartmentLineChart = ({ data }:any) => {
   const departments = Array.from(new Set(data.map((d: any) => d.department)));
-  console.log(data)
+
   
   const [selectedDepartment, setSelectedDepartment] = useState(departments[0]);
   const [startQuarter, setStartQuarter] = useState('Q1');
@@ -37,7 +37,7 @@ const DepartmentLineChart = ({ data }:any) => {
     labels: filteredData.map((d:any) => `${d.quarter} ${d.year}`),
     datasets: [
       {
-        label: 'Data',
+        label: `${selectedDepartment}`,
         data: filteredData.map((d:any) => d.value),
         borderColor: 'rgba(75,192,192,1)',
         backgroundColor: 'rgba(75,192,192,0.2)',

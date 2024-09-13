@@ -1,9 +1,8 @@
 import SpeedmeterComponent from '@/components/cards/SpeedmeterComponent'
-import WordCloudComponent from '@/components/cards/WordCloudComponent';
 import DepartmentLineChart from '@/components/Graphs/DepartmentLineChart';
 import LineChart from '@/components/Graphs/LineChart'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import Link from 'next/link';
+import { getCorporateScoreTrends, getDepartmentRankingDataForGraph, getDetailsForAdminDashboard } from '@/lib/actions';
+
 
 interface Props {
   searchParams: { [key: string]: string | undefined }
@@ -11,65 +10,27 @@ interface Props {
 
 
 const AdminHomePage = async({searchParams}: Props) => {
-  const data = [
-    { quarter: 'Q1', year: 2023, value: 4.3 },
-    { quarter: 'Q2', year: 2023, value: 3.5 },
-    { quarter: 'Q3', year: 2023, value: 3.8 },
-    { quarter: 'Q4', year: 2023, value: 4.8 },
-    { quarter: 'Q1', year: 2024, value: 4.5 },
-    { quarter: 'Q2', year: 2024, value: 4.9 },
-    { quarter: 'Q3', year: 2024, value: 4.2 },
-    { quarter: 'Q4', year: 2025, value: 4.1 },
-    { quarter: 'Q1', year: 2025, value: 4.6 },
-    { quarter: 'Q2', year: 2025, value: 4.8 },
-    // more data points...
-  ];
+  const today = new Date();
+  const currentYear = today.getFullYear();
+  const currentQuarter = Math.ceil((today.getMonth() + 1) / 3); 
+  const q = parseInt(searchParams['q'] || '')|| currentQuarter
+  const y = parseInt(searchParams['y'] || '')|| currentYear
 
-  const DepartmentData = [
-    { department: 'HR', quarter: 'Q1', year: 2023, value: 4.3 },
-    { department: 'HR', quarter: 'Q2', year: 2023, value: 4.5 },
-    { department: 'HR', quarter: 'Q3', year: 2023, value: 3.6 },
-    { department: 'Finance', quarter: 'Q1', year: 2023, value: 2.5 },
-    { department: 'Finance', quarter: 'Q2', year: 2023, value: 4.8 },
-    { department: 'IT', quarter: 'Q1', year: 2023, value: 3.8 },
-    { department: 'IT', quarter: 'Q2', year: 2023, value: 4.2 },
-    // more data points...
-  ];
+  const corporateScores = await getCorporateScoreTrends()
+  const departmentScoreTrends = await getDepartmentRankingDataForGraph()
 
-  
-const auditData = [
-  {
-    FullName: "Gilbert Kwateng Kusi",
-    Email: "gilbert.kusi@vra.com",
-    Action: "Rating Department",
-    Timeline: "7:45am, 17th June, 2024",
-    Description: "Gilbert Kusi rated Technical Services",
-  },
-  
-  {
-    FullName: "Gilbert Kwateng Kusi",
-    Email: "gilbert.kusi@vra.com",
-    Action: "Rating Department",
-    Timeline: "7:45am, 17th June, 2024",
-    Description: "Gilbert Kusi rated Technical Services",
-  },
-  
-  {
-    FullName: "Gilbert Kwateng Kusi",
-    Email: "gilbert.kusi@vra.com",
-    Action: "Rating Department",
-    Timeline: "7:45am, 17th June, 2024",
-    Description: "Gilbert Kusi rated Technical Services",
-  },
-  
-  {
-    FullName: "Gilbert Kwateng Kusi",
-    Email: "gilbert.kusi@vra.com",
-    Action: "Rating Department",
-    Timeline: "7:45am, 17th June, 2024",
-    Description: "Gilbert Kusi rated Technical Services",
-  },
-]
+  const {
+    corporateScore,
+    numberOfDepartmentsRated,
+    totalRespondents,
+    totalResponses,
+    totalLikes,
+    totalDislikes,
+    totalImprovements
+  } = await getDetailsForAdminDashboard(q, y)
+
+
+
 
   return (
     <div className='flex flex-col min-h-screen'>
@@ -79,54 +40,51 @@ const auditData = [
           <section className="col-span-4 flex gap-4 w-full">
             <section className="w-full grid grid-cols-3">
             <div className=" flex  flex-col items-center px-4 py-4 text-gray-800">
-              <h1 className="text-5xl font-bold">24</h1>
+              <h1 className="text-5xl font-bold">{numberOfDepartmentsRated}</h1>
               <p className="">Departments/ Units</p>
             </div>
             <div className=" flex  flex-col items-center px-4 py-4 text-gray-800">
-              <h1 className="text-5xl font-bold">535</h1>
+              <h1 className="text-5xl font-bold">{totalRespondents}</h1>
               <p className="">Respondents</p>
             </div>
             <div className=" flex  flex-col items-center px-4 py-4 text-gray-800">
-              <h1 className="text-5xl font-bold">600</h1>
+              <h1 className="text-5xl font-bold">{totalResponses}</h1>
               <p className="">Responses</p>
             </div>
             <div className=" flex  flex-col items-center px-4 py-4 text-gray-800">
-              <h1 className="text-5xl font-bold">52%</h1>
-              <p className="">Positive Responses</p>
+              <h1 className="text-5xl font-bold">{totalLikes}</h1>
+              <p className="">Likes</p>
             </div>
             <div className=" flex  flex-col items-center px-4 py-4 text-gray-800">
-              <h1 className="text-5xl font-bold">42%</h1>
-              <p className="">Negative Responses</p>
+              <h1 className="text-5xl font-bold">{totalDislikes}</h1>
+              <p className="">Dislikes</p>
             </div>
             <div className=" flex  flex-col items-center px-4 py-4 text-gray-800">
-              <h1 className="text-5xl font-bold">8%</h1>
-              <p className="">Neutral Responses</p>
+              <h1 className="text-5xl font-bold">{totalImprovements}</h1>
+              <p className="">Improvements</p>
             </div>
             </section>
           </section>
           <section className="col-span-2 w-11/12 h-72 ">
             <h1 className='mb-4 text-gray-800 font-bold '>Corporate Score</h1>
-            <SpeedmeterComponent value={4.3}/>
+            <SpeedmeterComponent value={corporateScore}/>
           </section>
       </section>
 
       <section className="w-full mt-4">
         <h1 className="font-bold mb-3 text-gray-700">Corporate Score Trends</h1>
         <section className="w-11/12 h-fit">
-          <LineChart data={data} />
+          <LineChart data={corporateScores} isCorporate={true}/>
         </section>
       </section>
       
       <section className="w-full mt-10 ">
         <h1 className="font-bold mb-3 text-gray-700">Department Score Trends</h1>
         <section className="w-11/12 h-fit">
-        <DepartmentLineChart data={DepartmentData} />
+        <DepartmentLineChart data={departmentScoreTrends} />
         </section>
       </section>
 
-
-
-     
     </div>
   )
 }

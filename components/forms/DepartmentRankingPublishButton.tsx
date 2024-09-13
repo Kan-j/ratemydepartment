@@ -9,6 +9,7 @@ import DownloadOption from './DownloadOption';
 
 const DepartmentRankingPublishButton = async({departmentRankingIds, quarter, year}:{departmentRankingIds: any, quarter:number, year:number}) => {
   const rankingsDataForAdmin = await getDepartmentRankingDataForAdmin(quarter, year)
+  // SESSION ADDED
   const downloadableRatingsDataForQuarterAndYear = await getDownloadableRatingsDataForQuarterAndYear(quarter, year)
   const downloadableRatingsDataForYear = await getDownloadableRatingsDataForYear(year)
 

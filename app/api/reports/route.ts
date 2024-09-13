@@ -1,4 +1,3 @@
-import Cors from 'micro-cors';
 import axios from 'axios'
 import path from 'path'; 
 import { promises as fs } from 'fs';
