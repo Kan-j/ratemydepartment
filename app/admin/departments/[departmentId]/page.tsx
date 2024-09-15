@@ -57,8 +57,6 @@ const AdminDepartmentDetails = async({params, searchParams}:Params) => {
       
       <CommentsSection departmentId={departmentIdInt} currentPage={page} quarter={q} year={y} sort={sort} isMyDepartment={false} isAdmin={true}/>
 
-
-      
     </div>
   )
 }

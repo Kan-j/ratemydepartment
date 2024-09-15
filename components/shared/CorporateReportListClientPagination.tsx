@@ -1,5 +1,7 @@
+"use client"
 import React from 'react'
 import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from '../ui/pagination';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
     
 interface ReportPaginationProps {
     NextPageExists: boolean;
@@ -14,22 +16,52 @@ const CorporateReportListClientPagination: React.FC<ReportPaginationProps> = ({
     totalPages,
     currentPage,
 }) => {
+
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+   // Function to create a query string with the updated page number
+   const createQueryString = React.useCallback(
+    (page: number) => {
+      const params = new URLSearchParams(searchParams.toString());
+      params.set('page', String(page));
+      return params.toString();
+    },
+    [searchParams]
+  );
+
+  // Handle page navigation
+  const handlePageChange = (page: number) => {
+    const newQueryString = createQueryString(page);
+    router.push(`${pathname}?${newQueryString}`);
+  };
+
 const pagesArray = Array.from({ length: totalPages }, (_, i) => i + 1);
-const getPageHref = (page: number) => `?corporate_reports_list=${page}`;
-  
+const getPageHref = (page: number) => {
+  const urlParams = new URLSearchParams(window.location.search);
+  urlParams.set('corporate_reports_list', String(page)); // Update or add the page param
+  return `${window.location.pathname}?${urlParams.toString()}`;
+};
+
+
     return (
       <section className="mt-6 mx-auto w-10/12 mb-8 text-gray-800">
         <Pagination>
           <PaginationContent>
-            <PaginationItem>
-              <PaginationPrevious
-                href={PrevPageExists ? getPageHref(currentPage - 1) : '#'}
-                isActive={PrevPageExists}
-              />
+          <PaginationItem>
+            <PaginationPrevious
+              className='cursor-pointer'
+              onClick={() => PrevPageExists && handlePageChange(currentPage - 1)}
+              isActive={PrevPageExists}
+            />
             </PaginationItem>
             {pagesArray.map((pageIndex) => (
-              <PaginationItem key={pageIndex}>
-                <PaginationLink href={getPageHref(pageIndex)} isActive={pageIndex === currentPage}>
+              <PaginationItem key={pageIndex} className='cursor-pointer'>
+                <PaginationLink
+                  onClick={() => handlePageChange(pageIndex)}
+                  isActive={pageIndex === currentPage}
+                >
                   {pageIndex}
                 </PaginationLink>
               </PaginationItem>
@@ -38,10 +70,11 @@ const getPageHref = (page: number) => `?corporate_reports_list=${page}`;
               <PaginationEllipsis />
             </PaginationItem>
             <PaginationItem>
-              <PaginationNext
-                href={NextPageExists ? getPageHref(currentPage + 1) : '#'}
-                isActive={NextPageExists}
-              />
+            <PaginationNext
+            className='cursor-pointer'
+              onClick={() => NextPageExists && handlePageChange(currentPage + 1)}
+              isActive={NextPageExists}
+            />
             </PaginationItem>
           </PaginationContent>
         </Pagination>

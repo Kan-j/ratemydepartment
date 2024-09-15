@@ -13,30 +13,55 @@ function getSessionFromContext() {
   return sessionNamespace.get('session');
 }
 
+  
 prisma.$use(async (params, next) => {
-    const session = sessionNamespace.get('session');
-    if(session){
-      console.log(session, params)
-      const before = Date.now()
-  
-      const result = await next(params)
-    
-      const after = Date.now()
-      console.log(result)
-      return result
-    }
-   
-  
-    const result = await next(params)
-  
+  const session = sessionNamespace.get('session');
 
-    // console.log(`Query ${params.model}.${params.action} took ${after - before}ms`)
-    // console.log(params)
-  
-    return result
+   // Skip logging for AuditTrailLog model to prevent an infinite loop
+
+
+  // Proceed only if a session exists
+  if (session) {
+    if (params.model === 'AuditTrailLog') {
+      return next(params); // Skip the middleware and proceed with the next step
+    }
+
+    const user = session.user;
+    const before = Date.now();
+    const actionType = params.action; // Action type being performed (e.g., 'findMany', 'create', etc.)
+    const actionDetails = JSON.stringify({
+      ...params.args, // Spread the arguments of the query/action
+    });
+
+
+    // Proceed with the actual Prisma operation
+    const result = await next(params);
+    const after = Date.now();
+   
+    (async () => {
+      try {
+        await prisma.auditTrailLog.create({
+          data: {
+            userName: user.name, // or get the user from session
+            userEmail: user.email,
+            actionType: actionType,
+            model: params.model ?? 'Admin',
+            actionDetails: `${actionDetails}`, // Log the query args
+            timestamp: new Date(after), // Log the time of action
+          },
+        });
+      } catch (logError) {
+        console.error('Failed to log action:', logError); // Handle logging errors
+      }
+    })();
+
     
-  })
-  
+    return result; // Return the result of the operation
+  }
+
+  // If no session exists, just proceed with the next middleware or Prisma operation
+  return next(params);
+});
 
 
 // export default prisma

@@ -48,11 +48,9 @@ const SingleReportListItem: FC<SingleReportListItemProps> = ({ reportData }) => 
         </section>
         </section>
         <section className="">
-        <Button className="flex gap-2">
-            <FaDownload/>
-            <span className="">Download</span>
-        </Button>
-        <PDFButtonLink 
+
+            
+            <PDFButtonLink 
             departmentalScore={reportData.departmentalScore}
             departmentStarCount={reportData.departmentStarCount.starCount}
             likes={reportData.likes}
@@ -63,6 +61,8 @@ const SingleReportListItem: FC<SingleReportListItemProps> = ({ reportData }) => 
             quarter={reportData.quarter}
             satisfactionImageUrl={reportData.satisfactionImageUrl}
             performanceTrendImageUrl={reportData.performanceTrendImageUrl}/>
+
+        
         </section>
     </section>
   )

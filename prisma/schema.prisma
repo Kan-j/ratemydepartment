@@ -21,7 +21,6 @@ model User {
   departmentId Int 
   department  Department@relation(fields: [departmentId], references: [id])  // Added relation details
   ratings       Rating[]     // One-to-many relation: a user can have multiple ratings
-  auditLogs       AuditLog[] // One-to-many relation: a user can have multiple audit logs
   isAdmin      Boolean   @default(false) // Added isAdmin field with default value false
 }
 
@@ -54,17 +53,17 @@ model Rating {
   ratedByUser        User       @relation(fields: [ratedByUserId], references: [id]) // Added relation details
 }
 
-model AuditLog {
-  id          Int       @id @default(autoincrement())
-  userId      Int       // The ID of the user who performed the action
-  name        String    // The name of the user
-  email       String    // The email of the user
-  action      String    // A brief description of the action performed
-  description String    // Detailed description of the action
-  timestamp   DateTime  @default(now()) // The time when the action was performed
 
-  user        User      @relation(fields: [userId], references: [id]) // Relation to User model
+model AuditTrailLog {
+  id           Int       @id @default(autoincrement()) // Unique identifier for the audit trail entry
+  userName     String    // Name of the user who performed the action
+  userEmail    String    // Email of the user who performed the action
+  actionType   String    // Type of action performed (e.g., 'findMany', 'update', 'create')
+  model   String    // Model
+  actionDetails String     // Details of the action (e.g., query parameters, data path)
+  timestamp    DateTime  @default(now()) // Time when the action was performed
 }
+
 
 
 model DepartmentRanking {

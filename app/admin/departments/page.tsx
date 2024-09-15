@@ -1,8 +1,7 @@
-import DepartmentListPagination from "@/components/cards/DepartmentListPagination"
 import SingleDepartmentListItem from "@/components/cards/SingleDepartmentListItem"
 import SearchBar from "@/components/forms/SearchBar"
 import { getAllDepartmentsWithAverageScore } from "@/lib/actions"
-
+export const dynamic = 'force-dynamic'; 
 
 const DepartmentsPage = async() => {
   const departments= await getAllDepartmentsWithAverageScore()
@@ -27,9 +26,6 @@ const DepartmentsPage = async() => {
           />
         ))}
         
-      </section>
-      <section className="w-4/5 flex justify-center mb-4 mt-4">
-        <DepartmentListPagination/>
       </section>
     </div>
   )

@@ -17,7 +17,6 @@ export async function getSession() {
     if (!session) {
       throw new Error('Session not found');
     }
-
     return {...session.user};
   } catch (error) {
     console.error('Failed to get session:', error);
@@ -117,26 +116,26 @@ interface UpdateRatingParams {
   path: string;
 }
 
-export async function updateRating({ ratingId, likes, dislikes, improvements, path }: UpdateRatingParams) {
-  try {
-    const updatedRating = await prisma.rating.update({
-      where: { id: ratingId },
-      data: {
-        likes: likes?.trim() || "", // Trim whitespace from likes
-        dislikes: dislikes?.trim() || "", // Trim whitespace from dislikes
-        improvements: improvements?.trim() || "", // Trim whitespace from improvements
-      },
-    });
+// export async function updateRating({ ratingId, likes, dislikes, improvements, path }: UpdateRatingParams) {
+//   try {
+//     const updatedRating = await prisma.rating.update({
+//       where: { id: ratingId },
+//       data: {
+//         likes: likes?.trim() || "", // Trim whitespace from likes
+//         dislikes: dislikes?.trim() || "", // Trim whitespace from dislikes
+//         improvements: improvements?.trim() || "", // Trim whitespace from improvements
+//       },
+//     });
 
-    // Perform any additional actions if necessary, such as revalidating paths
-    revalidatePath(path);
+//     // Perform any additional actions if necessary, such as revalidating paths
+//     revalidatePath(path);
 
-    return updatedRating; // Return the updated rating object
-  } catch (error: any) {
-    console.error(error);
-    throw new Error("An error occurred while updating the rating: " + error.message); // Include original error message
-  }
-}
+//     return updatedRating; // Return the updated rating object
+//   } catch (error: any) {
+//     console.error(error);
+//     throw new Error("An error occurred while updating the rating: " + error.message); // Include original error message
+//   }
+// }
 
 
 // export async function getDepartmentStatistics(quarter: number = 0, year: number = 0) {
@@ -518,75 +517,157 @@ async function calculateAverageRating(departmentId: number, year: number, quarte
 
 // This part is for the regular users to create a rating
 // And after creating a rating, I recalculate and update the average score of the department
-export async function createRating({departmentId, stars, likes, dislikes, improvements, userId, path}: CreateRatingParams) {
+// export async function createRating({departmentId, stars, likes, dislikes, improvements, userId, path}: CreateRatingParams) {
 
-  const today = new Date(); // Get the current date
+//   const today = new Date(); // Get the current date
 
-  try {
-    // Basic validation
-    if (stars < 1 || stars > 5) {
-      throw new Error("Invalid star rating. Please enter a value between 1 and 5.");
-    }
+//   try {
+//     // Basic validation
+//     if (stars < 1 || stars > 5) {
+//       throw new Error("Invalid star rating. Please enter a value between 1 and 5.");
+//     }
 
-    // Get current year and calculate quarter
-    const year = today.getFullYear(); // Assign current year
-    const quarter = Math.ceil((today.getMonth() + 1) / 3); // Calculate quarter (1-4)
+//     // Get current year and calculate quarter
+//     const year = today.getFullYear(); // Assign current year
+//     const quarter = Math.ceil((today.getMonth() + 1) / 3); // Calculate quarter (1-4)
 
-    const newRating = await prisma.rating.create({
-      data: {
-        departmentId,
-        stars,
-        likes: likes?.trim() || "", // Trim whitespace from likes
-        dislikes: dislikes?.trim() || "", // Trim whitespace from dislikes
-        improvements: improvements?.trim() || "", // Trim whitespace from improvements
-        quarter,
-        year,
-        ratedByUserId: userId, // Set the user who submitted the rating
-      },
+//     const newRating = await prisma.rating.create({
+//       data: {
+//         departmentId,
+//         stars,
+//         likes: likes?.trim() || "", // Trim whitespace from likes
+//         dislikes: dislikes?.trim() || "", // Trim whitespace from dislikes
+//         improvements: improvements?.trim() || "", // Trim whitespace from improvements
+//         quarter,
+//         year,
+//         ratedByUserId: userId, // Set the user who submitted the rating
+//       },
+//     });
+
+//     // Calculate new average rating
+//     const averageRating = await calculateAverageRating(departmentId, year, quarter);
+
+//     // Upsert department ranking
+//     const existingRanking = await prisma.departmentRanking.findFirst({
+//       where: {
+//         departmentId,
+//         year,
+//         quarter,
+//       },
+//     });
+
+//     if (existingRanking) {
+//       await prisma.departmentRanking.update({
+//         where: {
+//           id: existingRanking.id,
+//         },
+//         data: {
+//           averageRating,
+//           // Update isPublished or other fields if necessary
+//         },
+//       });
+//     } else {
+//       await prisma.departmentRanking.create({
+//         data: {
+//           departmentId,
+//           averageRating,
+//           isPublished: false, // or true, based on your logic
+//           year,
+//           quarter,
+//         },
+//       });
+//     }
+
+//     revalidatePath(path)
+//     return newRating; // Return the created rating object
+//   } catch (error:any) {
+//     console.error(error);
+//     throw new Error("An error occurred while creating the rating: " + error.message); // Include original error message
+//   } 
+// }
+
+
+
+export async function createRating({ departmentId, stars, likes, dislikes, improvements, userId, path }: CreateRatingParams): Promise<any> {
+  return new Promise((resolve, reject) => {
+    sessionNamespace.run(async () => {
+      try {
+        // Set session using sessionNamespace
+        sessionNamespace.set("session", {
+          user: await getSession(), // Assuming getSession() retrieves the current session
+        });
+
+        const today = new Date(); // Get the current date
+
+        // Basic validation
+        if (stars < 1 || stars > 5) {
+          throw new Error("Invalid star rating. Please enter a value between 1 and 5.");
+        }
+
+        // Get current year and calculate quarter
+        const year = today.getFullYear(); // Assign current year
+        const quarter = Math.ceil((today.getMonth() + 1) / 3); // Calculate quarter (1-4)
+
+        // Create a new rating entry
+        const newRating = await prisma.rating.create({
+          data: {
+            departmentId,
+            stars,
+            likes: likes?.trim() || "", // Trim whitespace from likes
+            dislikes: dislikes?.trim() || "", // Trim whitespace from dislikes
+            improvements: improvements?.trim() || "", // Trim whitespace from improvements
+            quarter,
+            year,
+            ratedByUserId: userId, // Set the user who submitted the rating
+          },
+        });
+
+        // Calculate the new average rating
+        const averageRating = await calculateAverageRating(departmentId, year, quarter);
+
+        // Upsert the department ranking
+        const existingRanking = await prisma.departmentRanking.findFirst({
+          where: {
+            departmentId,
+            year,
+            quarter,
+          },
+        });
+
+        if (existingRanking) {
+          await prisma.departmentRanking.update({
+            where: {
+              id: existingRanking.id,
+            },
+            data: {
+              averageRating,
+              // Update isPublished or other fields if necessary
+            },
+          });
+        } else {
+          await prisma.departmentRanking.create({
+            data: {
+              departmentId,
+              averageRating,
+              isPublished: false, // or true, based on your logic
+              year,
+              quarter,
+            },
+          });
+        }
+
+        // Revalidate path if needed
+        revalidatePath(path);
+
+        // Resolve with the created rating
+        resolve(newRating);
+      } catch (error: any) {
+        console.error('Error creating rating:', error);
+        reject(new Error("An error occurred while creating the rating: " + error.message));
+      }
     });
-
-    // Calculate new average rating
-    const averageRating = await calculateAverageRating(departmentId, year, quarter);
-
-    // Upsert department ranking
-    const existingRanking = await prisma.departmentRanking.findFirst({
-      where: {
-        departmentId,
-        year,
-        quarter,
-      },
-    });
-
-    if (existingRanking) {
-      await prisma.departmentRanking.update({
-        where: {
-          id: existingRanking.id,
-        },
-        data: {
-          averageRating,
-          // Update isPublished or other fields if necessary
-        },
-      });
-    } else {
-      await prisma.departmentRanking.create({
-        data: {
-          departmentId,
-          averageRating,
-          isPublished: false, // or true, based on your logic
-          year,
-          quarter,
-        },
-      });
-    }
-
-    revalidatePath(path)
-    return newRating; // Return the created rating object
-  } catch (error:any) {
-    console.error(error);
-    throw new Error("An error occurred while creating the rating: " + error.message); // Include original error message
-  } 
+  });
 }
-
 
 
 
@@ -798,81 +879,6 @@ export async function getDepartmentDetailsForQuarterAndYear(
 }
 
 // ************* Departments And My Department Page Server Actions For Both Regular Users & Admin ***************//
-
-// To get the comments and Pagination for JUST REGULAR USERs, because it just fetches the not hidden comments
-// export async function getCommentsPaginationForRegularUsers(
-//   id: number,
-//   quarter: number = 0,
-//   year: number = 0,
-//   page: number = 1,
-//   pageSize: number = 10,
-//   sortOrder: 'asc' | 'desc' = 'desc'
-// ) {
-//   try {
-//     const today = new Date();
-//     const currentYear = year || today.getFullYear();
-//     const currentQuarter = quarter || Math.ceil((today.getMonth() + 1) / 3); // Calculate current quarter if not provided
-
-//     const skip = (page - 1) * pageSize;
-
-//     // First, get the total number of ratings to calculate pagination details
-//     const totalRatingsCount = await prisma.rating.count({
-//       where: {
-//         departmentId: id,
-//         year: currentYear,
-//         quarter: currentQuarter,
-//         isHidden: false, // Only count visible ratings
-//         excludeFromAverage : false // Ensure only ratings are not excluded are considered
-//       },
-//     });
-
-//     // Fetch the paginated ratings
-//     const ratings = await prisma.rating.findMany({
-//       where: {
-//         departmentId: id,
-//         year: currentYear,
-//         quarter: currentQuarter,
-//         isHidden: false,
-//         excludeFromAverage : false, // Ensure only ratings are not excluded are considered
-//       },
-//       select: {
-//         id: true,
-//         stars: true,
-//         ratedByUserId: true,
-//         likes: true,
-//         dislikes: true,
-//         improvements: true,
-//         year: true,
-//         quarter: true,
-//         ratedByUser: {
-//           select: { id: true, departmentId: true, department: { select: { name: true } } }
-//         }
-//       },
-//       skip: skip,
-//       take: pageSize,
-//       orderBy: {
-//         stars: sortOrder // Sorting by stars
-//       }
-//     });
-
-//     // Calculate pagination details
-//     const totalPages = Math.ceil(totalRatingsCount / pageSize);
-//     const hasNextPage = page < totalPages;
-//     const hasPreviousPage = page > 1;
-
-//     return {
-//       ratings,         // The actual rating comments for this page
-//       currentPage: page,
-//       hasNextPage,
-//       hasPreviousPage,
-//       totalPages,
-//       totalRatingsCount
-//     };
-//   } catch (error) {
-//     console.error(error);
-//     throw new Error("An error occurred fetching department details");
-//   }
-// }
 
 
 interface Rating {
@@ -1547,54 +1553,124 @@ export async function getDepartmentRankingDataForAdmin(
 }
 
 
-export async function toggleIsHidden(ratingId: number) {
-  try {
-    // Fetch the current value of isHidden
-    const rating = await prisma.rating.findUnique({
-      where: { id: ratingId },
+// export async function toggleIsHidden(ratingId: number) {
+//   try {
+//     // Fetch the current value of isHidden
+//     const rating = await prisma.rating.findUnique({
+//       where: { id: ratingId },
+//     });
+
+//     if (!rating) {
+//       throw new Error('Rating not found');
+//     }
+
+//     // Toggle the isHidden property
+//     const updatedRating = await prisma.rating.update({
+//       where: { id: ratingId },
+//       data: { isHidden: !rating.isHidden },
+//     });
+
+//     return updatedRating;
+//   } catch (error) {
+//     console.error('Error toggling isHidden:', error);
+//     throw new Error('An error occurred while toggling isHidden');
+//   }
+// }
+
+export async function toggleIsHidden(ratingId: number): Promise<any> {
+  return new Promise((resolve, reject) => {
+    sessionNamespace.run(async () => {
+      try {
+        // Set session using sessionNamespace
+        sessionNamespace.set("session", {
+          user: await getSession(), // Assuming getSession() retrieves the current session
+        });
+
+        // Fetch the current value of isHidden
+        const rating = await prisma.rating.findUnique({
+          where: { id: ratingId },
+        });
+
+        if (!rating) {
+          throw new Error('Rating not found');
+        }
+
+        // Toggle the isHidden property
+        const updatedRating = await prisma.rating.update({
+          where: { id: ratingId },
+          data: { isHidden: !rating.isHidden },
+        });
+
+        // Resolve with the updated rating
+        resolve(updatedRating);
+      } catch (error: any) {
+        console.error('Error toggling isHidden:', error.message);
+        reject(new Error('An error occurred while toggling isHidden: ' + error.message));
+      }
     });
-
-    if (!rating) {
-      throw new Error('Rating not found');
-    }
-
-    // Toggle the isHidden property
-    const updatedRating = await prisma.rating.update({
-      where: { id: ratingId },
-      data: { isHidden: !rating.isHidden },
-    });
-
-    return updatedRating;
-  } catch (error) {
-    console.error('Error toggling isHidden:', error);
-    throw new Error('An error occurred while toggling isHidden');
-  }
+  });
 }
 
 
-export async function toggleExcludeFromAverage(ratingId: number) {
-  try {
-    // Fetch the current value of excludeFromAverage
-    const rating = await prisma.rating.findUnique({
-      where: { id: ratingId },
+
+// export async function toggleExcludeFromAverage(ratingId: number) {
+//   try {
+//     // Fetch the current value of excludeFromAverage
+//     const rating = await prisma.rating.findUnique({
+//       where: { id: ratingId },
+//     });
+
+//     if (!rating) {
+//       throw new Error('Rating not found');
+//     }
+
+//     // Toggle the excludeFromAverage property
+//     const updatedRating = await prisma.rating.update({
+//       where: { id: ratingId },
+//       data: { excludeFromAverage: !rating.excludeFromAverage },
+//     });
+
+//     return updatedRating;
+//   } catch (error) {
+//     console.error('Error toggling excludeFromAverage:', error);
+//     throw new Error('An error occurred while toggling excludeFromAverage');
+//   }
+// }
+
+export async function toggleExcludeFromAverage(ratingId: number): Promise<any> {
+  return new Promise((resolve, reject) => {
+    sessionNamespace.run(async () => {
+      try {
+        // Set session using sessionNamespace
+        sessionNamespace.set("session", {
+          user: await getSession(), // Assuming getSession() retrieves the current session
+        });
+
+        // Fetch the current value of excludeFromAverage
+        const rating = await prisma.rating.findUnique({
+          where: { id: ratingId },
+        });
+
+        if (!rating) {
+          throw new Error('Rating not found');
+        }
+
+        // Toggle the excludeFromAverage property
+        const updatedRating = await prisma.rating.update({
+          where: { id: ratingId },
+          data: { excludeFromAverage: !rating.excludeFromAverage },
+        });
+
+        // Resolve with the updated rating
+        resolve(updatedRating);
+      } catch (error: any) {
+        console.error('Error toggling excludeFromAverage:', error.message);
+        reject(new Error('An error occurred while toggling excludeFromAverage: ' + error.message));
+      }
     });
-
-    if (!rating) {
-      throw new Error('Rating not found');
-    }
-
-    // Toggle the excludeFromAverage property
-    const updatedRating = await prisma.rating.update({
-      where: { id: ratingId },
-      data: { excludeFromAverage: !rating.excludeFromAverage },
-    });
-
-    return updatedRating;
-  } catch (error) {
-    console.error('Error toggling excludeFromAverage:', error);
-    throw new Error('An error occurred while toggling excludeFromAverage');
-  }
+  });
 }
+
 
 
 
@@ -1689,7 +1765,7 @@ export async function getDepartmentQuarterlyAverages(departmentId: number): Prom
       try {
         // Retrieve session from the context
         sessionNamespace.set("session", {
-          userId: await getSession(),
+          user: await getSession(),
         });
 
         // Fetch the department rankings for the specified department
@@ -1773,7 +1849,7 @@ export async function getCorporateScoreTrends(): Promise<QuarterlyCorporateScore
       try {
         // Retrieve session from the context
         sessionNamespace.set("session", {
-          userId: await getSession(), // Get the current session user
+          user: await getSession(), // Get the current session user
         });
 
         // Fetch distinct year and quarter combinations for which department rankings are available
@@ -1855,7 +1931,7 @@ export async function getDepartmentRankingDataForGraph(): Promise<DepartmentData
         // Retrieve session and set it in sessionNamespace
         const session = await getSession();
         sessionNamespace.set("session", {
-          userId: session // Get the current session user ID
+          user: session // Get the current session user ID
         });
 
         // Fetch all published department rankings
@@ -2540,60 +2616,123 @@ interface CorporateReport {
 }
 
 
-export async function handleReportUploadAction(formData: FormData) {
+// export async function handleReportUploadAction(formData: FormData) {
 
-  const quarter = formData.get('quarter') as string;
-  const year = formData.get('year') as string;
-  const isPublished = formData.get('isPublished') === 'true';
-  const file = formData.get('file') as File ;
-  const pathName = formData.get('pathName') as string
+//   const quarter = formData.get('quarter') as string;
+//   const year = formData.get('year') as string;
+//   const isPublished = formData.get('isPublished') === 'true';
+//   const file = formData.get('file') as File ;
+//   const pathName = formData.get('pathName') as string
 
-  if (!file || file.size === 0) {
-    throw new Error('No file uploaded');
-  }
+//   if (!file || file.size === 0) {
+//     throw new Error('No file uploaded');
+//   }
   
 
-  try {
-    // Define the directory where the file will be saved
-    const uploadDir = path.join(process.cwd(), 'public', 'uploads', 'reports');
+//   try {
+//     // Define the directory where the file will be saved
+//     const uploadDir = path.join(process.cwd(), 'public', 'uploads', 'reports');
     
-    // Ensure the directory exists
-    await fs.mkdir(uploadDir, { recursive: true });
+//     // Ensure the directory exists
+//     await fs.mkdir(uploadDir, { recursive: true });
 
-    // Create a unique file name with a timestamp to avoid collisions
-     // Get the current date and time in a readable format
+//     // Create a unique file name with a timestamp to avoid collisions
+//      // Get the current date and time in a readable format
 
-     // Create a unique file name with the timestamp and original file name
-     const fileName = `${file.name}`;
-    const filePath = path.join(uploadDir, fileName);
+//      // Create a unique file name with the timestamp and original file name
+//      const fileName = `${file.name}`;
+//     const filePath = path.join(uploadDir, fileName);
 
-    // Read the file as a Buffer
-     // Read the file as a Buffer
-     const arrayBuffer = await file.arrayBuffer();
-     const buffer = Buffer.from(arrayBuffer); // Convert ArrayBuffer to Buffer
-    // Write the file to the server
+//     // Read the file as a Buffer
+//      // Read the file as a Buffer
+//      const arrayBuffer = await file.arrayBuffer();
+//      const buffer = Buffer.from(arrayBuffer); // Convert ArrayBuffer to Buffer
+//     // Write the file to the server
 
-    await fs.writeFile(filePath, buffer as any);
+//     await fs.writeFile(filePath, buffer as any);
 
-    // // Save the report details in the database
-    const report = await prisma.corporateReport.create({
-      data: {
-        quarter,
-        year,
-        fileUrl: `/uploads/reports/${fileName}`, // Save the file path
-        isPublished,
-      },
+//     // // Save the report details in the database
+//     const report = await prisma.corporateReport.create({
+//       data: {
+//         quarter,
+//         year,
+//         fileUrl: `/uploads/reports/${fileName}`, // Save the file path
+//         isPublished,
+//       },
+//     });
+
+//     revalidatePath(pathName)
+//     return {
+//       success: true,
+//       report,
+//     };
+//   } catch (error:any) {
+//     console.log("Error uploading report:", error.message);
+//     throw new Error("An error occurred while uploading the report", error);
+//   }
+// }
+
+
+export async function handleReportUploadAction(formData: FormData): Promise<{ success: boolean; report: any }> {
+  return new Promise((resolve, reject) => {
+    sessionNamespace.run(async () => {
+      try {
+        // Set session using sessionNamespace
+        sessionNamespace.set("session", {
+          user: await getSession(), // Assuming getSession() retrieves the current session
+        });
+
+        const quarter = formData.get('quarter') as string;
+        const year = formData.get('year') as string;
+        const isPublished = formData.get('isPublished') === 'true';
+        const file = formData.get('file') as File;
+        const pathName = formData.get('pathName') as string;
+
+        if (!file || file.size === 0) {
+          throw new Error('No file uploaded');
+        }
+
+        // Define the directory where the file will be saved
+        const uploadDir = path.join(process.cwd(), 'public', 'uploads', 'reports');
+
+        // Ensure the directory exists
+        await fs.mkdir(uploadDir, { recursive: true });
+
+        // Create a unique file name with the original file name
+        const fileName = `${file.name}`;
+        const filePath = path.join(uploadDir, fileName);
+
+        // Read the file as a Buffer
+        const arrayBuffer = await file.arrayBuffer();
+        const buffer = Buffer.from(arrayBuffer); // Convert ArrayBuffer to Buffer
+
+        // Write the file to the server
+        await fs.writeFile(filePath, buffer as any);
+
+        // Save the report details in the database
+        const report = await prisma.corporateReport.create({
+          data: {
+            quarter,
+            year,
+            fileUrl: `/uploads/reports/${fileName}`, // Save the file path
+            isPublished,
+          },
+        });
+
+        // Revalidate the path
+        revalidatePath(pathName);
+
+        // Resolve the result
+        resolve({
+          success: true,
+          report,
+        });
+      } catch (error: any) {
+        console.error('Error uploading report:', error.message);
+        reject(new Error('An error occurred while uploading the report: ' + error.message));
+      }
     });
-
-    revalidatePath(pathName)
-    return {
-      success: true,
-      report,
-    };
-  } catch (error:any) {
-    console.log("Error uploading report:", error.message);
-    throw new Error("An error occurred while uploading the report", error);
-  }
+  });
 }
 
 
@@ -2830,29 +2969,64 @@ export async function getPaginatedCorporateReportsForClient(page: number = 1, li
 
 
 // For Corporate Report Published status
-export async function togglePublished(reportId: number) {
-  try {
-    // Fetch the existing report
-    const existingReport = await prisma.corporateReport.findUnique({
-      where: { id: reportId },
+// export async function togglePublished(reportId: number) {
+//   try {
+//     // Fetch the existing report
+//     const existingReport = await prisma.corporateReport.findUnique({
+//       where: { id: reportId },
+//     });
+
+//     if (!existingReport) {
+//       throw new Error('Report not found');
+//     }
+
+//     // Toggle the isPublished status
+//     const updatedReport = await prisma.corporateReport.update({
+//       where: { id: reportId },
+//       data: { isPublished: !existingReport.isPublished },
+//     });
+
+//     return updatedReport;
+//   } catch (error) {
+//     console.error('Error updating report:', error);
+//     throw new Error('Error updating report');
+//   }
+// }
+
+export async function togglePublished(reportId: number): Promise<any> {
+  return new Promise((resolve, reject) => {
+    sessionNamespace.run(async () => {
+      try {
+        // Set session using sessionNamespace
+        sessionNamespace.set("session", {
+          user: await getSession(), // Assuming getSession() retrieves the current session
+        });
+
+        // Fetch the existing report
+        const existingReport = await prisma.corporateReport.findUnique({
+          where: { id: reportId },
+        });
+
+        if (!existingReport) {
+          throw new Error('Report not found');
+        }
+
+        // Toggle the isPublished status
+        const updatedReport = await prisma.corporateReport.update({
+          where: { id: reportId },
+          data: { isPublished: !existingReport.isPublished },
+        });
+
+        // Resolve with the updated report
+        resolve(updatedReport);
+      } catch (error: any) {
+        console.error('Error updating report:', error.message);
+        reject(new Error('Error updating report: ' + error.message));
+      }
     });
-
-    if (!existingReport) {
-      throw new Error('Report not found');
-    }
-
-    // Toggle the isPublished status
-    const updatedReport = await prisma.corporateReport.update({
-      where: { id: reportId },
-      data: { isPublished: !existingReport.isPublished },
-    });
-
-    return updatedReport;
-  } catch (error) {
-    console.error('Error updating report:', error);
-    throw new Error('Error updating report');
-  }
+  });
 }
+
 
 interface AdminDashboardDetails {
   corporateScore: number;
@@ -2872,7 +3046,7 @@ export async function getDetailsForAdminDashboard(quarter: number, year: number)
         // Retrieve session from the context
         const session = await getSession();
         sessionNamespace.set("session", {
-          userId: session
+          user: session
         });
 
         // Fetch all published department rankings for the specified year and quarter
@@ -2960,6 +3134,88 @@ export async function getDetailsForAdminDashboard(quarter: number, year: number)
       }
     });
   });
+}
+
+
+
+type FetchAuditTrailLogsParams = {
+  page?: number; // Page number for pagination
+  pageSize?: number; // Number of entries per page
+  startDate?: Date; // Optional start date for date range filtering
+  endDate?: Date; // Optional end date for date range filtering
+  models?: string[]; // Optional filter for userName
+  actionType?: string[]; // Optional filter for actionType
+};
+
+export async function fetchAuditTrailLogs({
+  page = 1,
+  pageSize = 50,
+  startDate,
+  endDate,
+  models=[],
+  actionType=[],
+}: FetchAuditTrailLogsParams) {
+  const skip = (page - 1) * pageSize;
+  
+  // Construct the "where" clause for the filters
+  const whereClause: any = {};
+  
+  // Add date range filters if provided
+  if (startDate && endDate) {
+    whereClause.timestamp = {
+      gte: new Date(startDate),
+      lte: new Date(endDate),
+    };
+  } else if (startDate) {
+    whereClause.timestamp = {
+      gte: new Date(startDate),
+    };
+  } else if (endDate) {
+    whereClause.timestamp = {
+      lte: new Date(endDate),
+    };
+  }
+
+  // Add actionType filter if provided
+  if (actionType.length > 0) {
+    whereClause.actionType = {
+      in: actionType, // Filter by selected action types
+    };
+  }
+
+  // Add models filter if provided
+  if (models.length > 0) {
+    whereClause.model = {
+      in: models, // Filter by selected models
+    };
+  }
+
+  try {
+    // Fetch the total count of entries matching the filters
+    const totalCount = await prisma.auditTrailLog.count({
+      where: whereClause,
+    });
+
+    // Fetch the data with pagination and filters
+    const logs = await prisma.auditTrailLog.findMany({
+      where: whereClause,
+      skip,
+      take: pageSize,
+      orderBy: {
+        timestamp: 'desc', // Sort by the most recent entries
+      },
+    });
+
+    return {
+      logs, // The fetched logs
+      totalPages: Math.ceil(totalCount / pageSize), // Calculate total pages
+      currentPage: page, // Current page
+      totalEntries: totalCount, // Total count of matching entries
+    };
+  } catch (error) {
+    console.error('Failed to fetch audit logs:', error);
+    throw new Error('Failed to fetch audit logs');
+  }
 }
 
 // Updates Ending

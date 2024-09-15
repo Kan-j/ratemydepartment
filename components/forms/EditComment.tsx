@@ -14,7 +14,7 @@ import {
   import { Textarea } from '@/components/ui/textarea'
   import { useState } from 'react'
   import { usePathname, useRouter } from 'next/navigation'
-  import { updateRating } from '@/lib/actions'
+  // import { updateRating } from '@/lib/actions'
   import { Bounce, toast } from 'react-toastify';
   import { Button } from "../ui/button"
   
@@ -79,10 +79,10 @@ const EditComment = ({children, rating}: RatingDetailsProp) => {
 
 
 
-     async function onSubmit(values: z.infer<typeof formSchema>) {
-       await updateRating({likes: values.likes, dislikes: values.dislikes, improvements: values.improvements, path: pathname, ratingId: rating.id})
-          setOpen(false)
-      }
+    //  async function onSubmit(values: z.infer<typeof formSchema>) {
+    //    await updateRating({likes: values.likes, dislikes: values.dislikes, improvements: values.improvements, path: pathname, ratingId: rating.id})
+    //       setOpen(false)
+    //   }
 
 
   return (
@@ -98,7 +98,7 @@ const EditComment = ({children, rating}: RatingDetailsProp) => {
                         {`Edit Comment`}</h1></DialogTitle>
                     </DialogHeader>
                     <Form {...form}>
-                        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                        <form  className="space-y-4">
                             <FormField
                             control={form.control}
                             name="likes"

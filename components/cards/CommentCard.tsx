@@ -6,7 +6,6 @@ import CommentCardHeader from '../forms/CommentCardHeader';
 
 interface RatingDetails {
   isAdmin: boolean,
-  key:number,
   rating: {
   id: number;
   stars: number;
@@ -28,10 +27,10 @@ interface RatingDetails {
   }};
 }
 
-const CommentCard = ({rating, key,isAdmin}: RatingDetails) => {
+const CommentCard = ({rating, isAdmin}: RatingDetails) => {
  
   return (
-    <section key={key} className="bg-blue-50 px-4 py-4 rounded-lg md:max-w-[700px] lg:max-w-[980px] xl:max-w-[1000px] 2xl:max-w-[1000px]">
+    <section className="bg-blue-50 px-4 py-4 rounded-lg md:max-w-[700px] lg:max-w-[980px] xl:max-w-[1000px] 2xl:max-w-[1000px]">
     <div className="flex justify-between md:w-4/5 mb-4 sm:mb-2">
        <CommentCardHeader rating={rating}/>
         {isAdmin && <CommentActions id={rating.id}/>}

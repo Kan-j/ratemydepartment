@@ -26,6 +26,7 @@ const PDFButtonLink: React.FC<PDFButtonLinkProps> = (props) => {
   return (
     // <PDFDownloadLink document={<DepartmentReportPDF />} fileName="somename.pdf">
     <PDFDownloadLink
+    className='bg-blue-500 px-3 text-gray-100 py-2 rounded-lg hover:bg-blue-700 hover:text-white'
     document={<DepartmentReportPDF {...props} />}
     fileName={`${props.departmentName}_Report_Q${props.quarter}_${props.year}.pdf`}
   >

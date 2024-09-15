@@ -1,5 +1,5 @@
 import { LoginForm } from "@/components/forms/LoginForm"
-
+export const dynamic = 'force-dynamic';
 const LoginPage = () => {
 
   return (
